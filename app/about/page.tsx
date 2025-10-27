@@ -7,7 +7,7 @@ import React from "react";
 
 const AboutPage: React.FC = () => {
   return (
-    <section className="bg-gray-50 py-16 px-4 sm:px-6 lg:px-8 border-t border-b border-gray-100">
+    <section className="bg-gray-50 mt-10 py-16 px-4 sm:px-6 lg:px-8 border-t border-b border-gray-100">
       <div className="max-w-7xl mx-auto">
         {/* ---------- Hero Banner ---------- */}
         <div className="relative w-full h-96 mb-16  overflow-hidden shadow-lg">
@@ -71,7 +71,7 @@ const AboutPage: React.FC = () => {
             </p>
             <Link
               href="/about"
-              className="inline-flex items-center px-6 py-3 border border-orange-500 text-orange-500 font-semibold text-sm uppercase tracking-wider hover:bg-orange-50 transition duration-200"
+              className="inline-flex items-center px-6 py-3 border border-orange-500 text-orange-500 font-semibold text-sm uppercase tracking-wider rounded hover:bg-orange-50 transition duration-200"
             >
               Read More
               <ArrowRight className="w-4 h-4 ml-2" />

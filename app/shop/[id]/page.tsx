@@ -123,7 +123,7 @@ export default function ProductDetails() {
         <p className="text-gray-600">Product not found.</p>
         <button
           onClick={() => router.push("/shop")}
-          className="mt-4 px-4 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-600"
+          className="mt-4 px-4 py-2 bg-yellow-500 text-white  hover:bg-yellow-600"
         >
           Back to Shop
         </button>
@@ -135,7 +135,7 @@ export default function ProductDetails() {
     <div className="max-w-7xl mx-auto px-6 py-10 grid grid-cols-1 md:grid-cols-2 gap-10">
       {/* Left Image Section */}
       <div className="space-y-4">
-        <div className="relative w-full h-[500px] border rounded-lg overflow-hidden">
+        <div className="relative w-full h-[500px] border -lg overflow-hidden">
           <Image
             src={product.image}
             alt={product.name}
@@ -149,7 +149,7 @@ export default function ProductDetails() {
             <div
               key={i}
               style={{ backgroundColor: c }}
-              className="w-12 h-12 rounded border cursor-pointer"
+              className="w-12 h-12  border cursor-pointer"
             ></div>
           ))}
         </div>
@@ -183,7 +183,7 @@ export default function ProductDetails() {
 
         <div className="mt-6">
           <h4 className="font-medium mb-2 text-sm">Size</h4>
-          <select className="border p-2 rounded text-sm">
+          <select className="border p-2  text-sm">
             <option>Select a size</option>
             {product.size.map((s) => (
               <option key={s}>{s}</option>
@@ -209,7 +209,7 @@ export default function ProductDetails() {
         </div>
 
         <button
-          className="mt-6 w-full flex items-center justify-center gap-2 py-3 bg-yellow-500 text-white hover:bg-yellow-600 transition rounded"
+          className="mt-6 w-full flex items-center justify-center gap-2 py-3 bg-yellow-500 text-white hover:bg-yellow-600 transition "
         >
           <ShoppingCart size={18} /> Add to Cart
         </button>

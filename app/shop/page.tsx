@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import { Star, } from "lucide-react";
+import { Star } from "lucide-react";
 import Link from "next/link";
 
 // -------- Product Type --------

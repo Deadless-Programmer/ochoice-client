@@ -4,7 +4,7 @@ import React from "react";
 import Image from "next/image";
 import { Heart, ShoppingCart } from "lucide-react";
 import toast from "react-hot-toast";
-import Link from "next/link";
+
 
 // **********************************************
 // Product Interface
@@ -53,7 +53,7 @@ const featuredProduct: Product = {
 // **********************************************
 const FeaturedProductCard: React.FC<{ product: Product }> = ({ product }) => {
   const {
-    id,
+  
     name,
     category,
     price,

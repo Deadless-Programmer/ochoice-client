@@ -1,17 +1,53 @@
-"use client";
+'use client';
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ShoppingCart, Menu, X, LayoutDashboard } from "lucide-react";
 import Link from "next/link";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
+  // ⭐️ New state to track scroll position for dynamic styling
+  const [isScrolled, setIsScrolled] = useState(false); 
 
   const toggleMenu = () => setIsOpen(!isOpen);
 
+  // ⭐️ useEffect to handle scroll event
+  useEffect(() => {
+    const handleScroll = () => {
+      // Check if the scroll position is past a certain threshold (e.g., 50px)
+      const scrolled = window.scrollY > 50;
+      if (scrolled !== isScrolled) {
+        setIsScrolled(scrolled);
+      }
+    };
+
+    // Add scroll event listener when the component mounts
+    window.addEventListener("scroll", handleScroll);
+
+    // Clean up the event listener when the component unmounts
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, [isScrolled]); // Re-run effect only if isScrolled changes
+
   return (
-    <nav className=" bg-white shadow-sm max-w-7xl mx-auto">
-      <div className="max-w-7xl mx-auto flex items-center justify-between px-6 py-4">
+    // ⭐️ Fixed Positioning, Full Width, High Z-Index for "always on top"
+    // ⭐️ Dynamic background/shadow based on scroll for smooth effect
+    <nav
+      className={`
+        sticky top-0 w-full z-50 transition-all duration-300 ease-in-out  max-w-7xl mx-auto
+        ${isScrolled 
+          ? 'bg-white shadow-lg' // Scrolled: White background, subtle shadow
+          : 'bg-white shadow-sm ' // Top: Original shadow, constrained width
+        }
+      `}
+    >
+      <div 
+        // ⭐️ Full width content container when fixed, centered when at top
+        className={`mx-auto flex items-center justify-between px-6 py-4 
+            ${isScrolled ? 'max-w-full' : 'max-w-7xl'}` // Adjust max-width based on scroll
+        }>
+        
         {/* Logo */}
         <Link href="/" className="text-2xl font-bold text-gray-800">
           <span className="text-orange-400">o</span>Choice
@@ -22,9 +58,7 @@ const Navbar = () => {
           <li><Link href="/">HOME</Link></li>
           <li><Link href="/shop">SHOP</Link></li>
           <li><Link href="/about">ABOUT</Link></li>
-          {/* <li><Link href="/pages">PAGES</Link></li> */}
           <li><Link href="/blog">BLOG</Link></li>
-          
         </ul>
 
         {/* Right Section */}
@@ -46,14 +80,13 @@ const Navbar = () => {
           </div>
 
           {/* Cart */}
-          <Link  href="/cart">
+          <Link href="/cart">
           <div className="relative cursor-pointer text-gray-600">
             <ShoppingCart className="w-5 h-5" />
             <span className="absolute -top-2 -right-2 bg-orange-400 text-white text-xs rounded-full px-1.5">2</span>
           </div></Link>
-          <Link  href="/dashboard">
+          <Link href="/dashboard">
           <div className="relative cursor-pointer text-gray-600">
-            
             <LayoutDashboard className="w-5 h-5" />
           </div></Link>
 
@@ -67,14 +100,13 @@ const Navbar = () => {
       {/* Mobile Menu */}
       {isOpen && (
         <ul className="md:hidden flex flex-col items-center gap-4 py-4 bg-white border-t text-gray-700">
-          <li><Link href="/">HOME</Link></li>
-          <li><Link href="/shop">SHOP</Link></li>
-          <li><Link href="/about">ABOUT</Link></li>
-          {/* <li><Link href="/pages">PAGES</Link></li> */}
-          <li><Link href="/blog">BLOG</Link></li>
-         
-          <li><Link href="/login">Login</Link></li>
-          <li><Link href="/register">Sign Up</Link></li>
+          <li><Link href="/" onClick={toggleMenu}>HOME</Link></li>
+          <li><Link href="/shop" onClick={toggleMenu}>SHOP</Link></li>
+          <li><Link href="/about" onClick={toggleMenu}>ABOUT</Link></li>
+          <li><Link href="/blog" onClick={toggleMenu}>BLOG</Link></li>
+          
+          <li><Link href="/login" onClick={toggleMenu}>Login</Link></li>
+          <li><Link href="/register" onClick={toggleMenu}>Sign Up</Link></li>
         </ul>
       )}
     </nav>
