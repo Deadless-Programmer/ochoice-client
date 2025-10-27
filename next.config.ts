@@ -5,16 +5,22 @@ const nextConfig = {
       {
         protocol: 'https',
         hostname: 'images.unsplash.com',
-        pathname: '/**', // সব path allow করবে
+        pathname: '/**',
       },
       {
         protocol: 'https',
-        hostname: 'www.pinterest.com',
-        pathname: '/**', // সব path allow করবে
+        hostname: 'upload.wikimedia.org',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'cdn-icons-png.flaticon.com',
+        pathname: '/**',
       },
     ],
   },
 };
 
 export default nextConfig;
+
 
