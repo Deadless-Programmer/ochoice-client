@@ -5,7 +5,7 @@ export default function ShopLoading() {
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50 p-4 animate-pulse">
       {/* Loading Spinner */}
-      <div className="w-16 h-16 border-4 border-blue-500 border-dashed rounded-full animate-spin mb-8"></div>
+      <div className="w-16 h-16 border-4 border-orange-500 border-dashed rounded-full animate-spin mb-8"></div>
       
       <h2 className="text-2xl font-semibold text-gray-700 mb-6">Loading Products...</h2>
       
