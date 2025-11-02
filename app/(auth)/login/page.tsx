@@ -1,19 +1,47 @@
 // app/login/page.tsx
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
-// Lucide Icons are used as a standard React Icon library
+
 import { ArrowRight, } from 'lucide-react';
 import { IoLogoFacebook } from 'react-icons/io5';
 import { FaGoogle } from 'react-icons/fa';
+import { useAppDispatch } from '@/redux/hooks';
+import { useRouter } from 'next/navigation';
+import { loginSuccess } from '@/redux/features/authSlice';
+import axios, { AxiosError } from 'axios';
 
 const LoginPage: React.FC = () => {
-  const handleSignIn = (e: React.FormEvent) => {
+
+
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const dispatch = useAppDispatch();
+  const router = useRouter();
+
+
+
+
+  
+const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
-    // ⚠️ Replace this alert with your actual sign-in logic (API call, state update, routing)
-    alert('Sign In attempt. (Replace with actual API call)');
+    try {
+      const res = await axios.post(
+        `${process.env.NEXT_PUBLIC_API_URL}/auth/login`,
+        { email, password }
+      );
+
+      console.log("Login successful:", res.data);
+      dispatch(loginSuccess(res.data)); // payload পাঠাও redux এ
+      router.push("/dashboard");
+    } catch (err: unknown) {
+      if (err instanceof AxiosError) {
+        console.log((err.response?.data as { message: string })?.message);
+      }
+    }
   };
+
 
   return (
     // ⭐️ Height: min-h-screen/2 or min-h-full can be used if you have a wrapper layout
@@ -40,8 +68,10 @@ const LoginPage: React.FC = () => {
             </label>
             {/* ⭐️ Input Padding p-3 -> p-2.5 */}
             <input
-              type="text"
+              type="email"
               id="email"
+              value={email}
+          onChange={(e) => setEmail(e.target.value)}
               required
               className="w-full border border-gray-300 rounded-md p-2.5 focus:ring-orange-400 focus:border-orange-400 transition duration-150"
             />
@@ -55,6 +85,8 @@ const LoginPage: React.FC = () => {
               type="password"
               id="password"
               required
+              value={password}
+          onChange={(e) => setPassword(e.target.value)}
               className="w-full border border-gray-300 rounded-md p-2.5 focus:ring-orange-400 focus:border-orange-400 transition duration-150"
             />
           </div>

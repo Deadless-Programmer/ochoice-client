@@ -8,7 +8,7 @@ export default function AuthLayout({
   children: React.ReactNode;
 }) {
  return (
-    <div > {/* Sudhu ekta div (ba fragment) diye wrap koro */}
+    <div > 
       {children}
     </div>
   );

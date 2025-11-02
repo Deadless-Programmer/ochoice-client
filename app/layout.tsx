@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
 import ConditionalNavbar from "@/components/ConditionalNavbar";
+import Providers from "./providers";
 
 
 
@@ -32,7 +33,7 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased `}
       >
         <ConditionalNavbar />
-        {children}
+       <Providers>{children}</Providers>
       </body>
     </html>
   );

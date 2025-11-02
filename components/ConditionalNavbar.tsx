@@ -8,7 +8,7 @@ export default function ConditionalNavbar() {
   console.log('Current pathname:', pathname)
   
   // Duto specific path-ke exclude koro
-  if (pathname === "/login" || pathname === "/register") {
+  if (pathname === "/login" || pathname === "/register" || pathname ==="/createAUser" || pathname ==="/changePassword") {
     return null; 
   }
   

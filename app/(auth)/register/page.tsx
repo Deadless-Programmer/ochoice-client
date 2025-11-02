@@ -1,7 +1,7 @@
 // app/register/page.tsx
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
 // Lucide Icons are used as a standard React Icon library
 import { ArrowRight} from 'lucide-react';
@@ -9,6 +9,14 @@ import { FaGoogle } from 'react-icons/fa';
 import { IoLogoFacebook } from "react-icons/io5";
 
 const RegisterPage: React.FC = () => {
+
+ const [isChecked, setIsChecked] = useState(false);
+
+  const handleCheckbox = (e: React.ChangeEvent<HTMLInputElement>) => {
+    console.log(e.target.checked);
+    setIsChecked(e.target.checked);
+  };
+
   const handleRegister = (e: React.FormEvent) => {
     e.preventDefault();
     // ⚠️ Replace this alert with your actual registration logic (API call, state update, routing)
@@ -79,6 +87,7 @@ const RegisterPage: React.FC = () => {
           {/* Privacy Policy Checkbox - Reduced Top Padding */}
           <div className="flex items-center justify-start text-xs sm:text-sm pt-1">
             <input 
+            onChange={handleCheckbox}
               type="checkbox" 
               id="privacy-policy" 
               required 
@@ -90,12 +99,19 @@ const RegisterPage: React.FC = () => {
           </div>
 
           {/* Sign Up Button - Reduced Vertical Padding */}
-          <button
-            type="submit"
-            className="flex items-center justify-center w-full px-6 py-2.5 bg-orange-500 text-white font-semibold rounded-lg shadow-md hover:bg-orange-600 transition duration-200 mt-4"
-          >
-            SIGN UP <ArrowRight className="w-4 h-4 ml-2" />
-          </button>
+         <button
+                     disabled={!isChecked}
+                     type="submit"
+                     className={`flex items-center justify-center w-full px-6 py-2.5 font-semibold rounded-lg shadow-md transition duration-200 mt-4
+             ${
+               isChecked
+                 ? "bg-orange-500 text-white hover:bg-orange-600 cursor-pointer"
+                 : "bg-gray-300 text-gray-500 cursor-not-allowed"
+             }
+           `}
+                   >
+                     SIGN UP <ArrowRight className="w-4 h-4 ml-2" />
+                   </button>
         </form>
 
         {/* Social Sign In - Reduced Top Padding (pt-6 -> pt-4) and reduced gap */}
