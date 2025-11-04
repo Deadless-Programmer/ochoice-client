@@ -4,6 +4,7 @@ import "./globals.css";
 
 import ConditionalNavbar from "@/components/ConditionalNavbar";
 import Providers from "./providers";
+import AuthInitializer from "@/components/AuthInitializer";
 
 
 
@@ -32,8 +33,13 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased `}
       >
+
+        
+        
+       <Providers>
         <ConditionalNavbar />
-       <Providers>{children}</Providers>
+        <AuthInitializer/>
+        {children}</Providers>
       </body>
     </html>
   );

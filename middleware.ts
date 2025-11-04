@@ -1,26 +1,58 @@
-// middleware.ts
-import { NextResponse } from 'next/server';
-import type { NextRequest } from 'next/server';
+import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
+  // import jwt from "jsonwebtoken"; // 👈 middleware-edge এ এটা কাজ করবে না যদি তুমি serverless route এ চালাও, তাই নিচে decode manually করবো
 
-export function middleware(request: NextRequest) {
-  const token = request.cookies.get('session-token'); // Check koro token ache kina
+export async function middleware(request: NextRequest) {
+  const refreshToken = request.cookies.get("refreshToken")?.value;
   const pathname = request.nextUrl.pathname;
 
-  // Protected Routes list
-  if (pathname.startsWith('/dashboard') && !token) {
-    // Jodi Protected route-e token na thake, login-e redirect koro
-    return NextResponse.redirect(new URL('/login', request.url));
+  // ✅ Public routes
+  if (pathname === "/login" || pathname === "/register") {
+    if (refreshToken) {
+      return NextResponse.redirect(new URL("/dashboard", request.url));
+    }
+    return NextResponse.next();
   }
 
-  // Jodi '/login' e token thake, tahole dashboard-e redirect koro
-  if ((pathname === '/login' || pathname === '/register') && token) {
-    return NextResponse.redirect(new URL('/dashboard', request.url));
+  // ✅ Protected routes check
+  if (pathname.startsWith("/dashboard")) {
+    if (!refreshToken) {
+      return NextResponse.redirect(new URL("/login", request.url));
+    }
+
+    // Cookie থাকলে user role অনুযায়ী path check করা হবে
+    const dashboardPath = pathname.split("/")[2]; // e.g. admin, customer
+
+    try {
+      // Token থেকে role ডিকোড করার জন্য lightweight jwt parser (middleware-edge compatible)
+      const tokenPayload = JSON.parse(
+        Buffer.from(refreshToken.split(".")[1], "base64").toString()
+      );
+
+      const userRole = tokenPayload.role;
+
+      // 🔒 Role mismatch হলে redirect করো
+      if (
+        (dashboardPath === "admin" && userRole !== "admin") ||
+        (dashboardPath === "seller" && userRole !== "seller") ||
+        (dashboardPath === "customer" && userRole !== "customer") ||
+        (dashboardPath === "superAdmin" && userRole !== "superAdmin")
+      ) {
+        return NextResponse.redirect(new URL("/unauthorized", request.url));
+      }
+    } catch (err) {
+      console.error("Token parse failed:", err);
+      return NextResponse.redirect(new URL("/login", request.url));
+    }
   }
 
-  return NextResponse.next(); // Baki request gulo chaliye jao
+  return NextResponse.next();
 }
 
-// Kon path-e middleware run hobe seta define koro
 export const config = {
-  matcher: ['/dashboard/:path*', '/login', '/register'],
+  matcher: [
+    "/dashboard/:path*",
+    "/login",
+    "/register",
+  ],
 };

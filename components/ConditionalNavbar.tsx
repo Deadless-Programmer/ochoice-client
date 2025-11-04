@@ -11,6 +11,10 @@ export default function ConditionalNavbar() {
   if (pathname === "/login" || pathname === "/register" || pathname ==="/createAUser" || pathname ==="/changePassword") {
     return null; 
   }
+
+  if(pathname.startsWith("/dashboard")){
+    return null;
+  }
   
   // Jodi bishal onyo kono Auth page thake, tahole ei line-ta rakhte paro.
   // Kintu beshirbhag kshetre uporer duto check-i kaaj kore.
