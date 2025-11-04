@@ -26,7 +26,16 @@ const initialState: AuthState = {
   loading: false,
 };
 
-// ✅ Login thunk
+// ✅ Register User thunk
+export const register = createAsyncThunk(
+  "auth/register",
+  async (credentials: {username:string, email: string; password: string }) => {
+    const res = await publicAxios.post("/auth/register", credentials);
+    localStorage.setItem("accessToken", res.data.accessToken);
+    return res.data;
+  }
+);
+
 export const login = createAsyncThunk(
   "auth/login",
   async (credentials: { email: string; password: string }) => {
@@ -77,6 +86,11 @@ const authSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder
+      .addCase(register.fulfilled, (state, action) => {
+        state.user = action.payload.user;
+        state.accessToken = action.payload.accessToken;
+        state.isAuthenticated = true;
+      })
       .addCase(login.fulfilled, (state, action) => {
         state.user = action.payload.user;
         state.accessToken = action.payload.accessToken;

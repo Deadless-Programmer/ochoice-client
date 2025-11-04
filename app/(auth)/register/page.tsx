@@ -7,9 +7,16 @@ import Link from 'next/link';
 import { ArrowRight} from 'lucide-react';
 import { FaGoogle } from 'react-icons/fa';
 import { IoLogoFacebook } from "react-icons/io5";
+import { useAppDispatch } from '@/redux/hooks';
+import { useRouter } from 'next/navigation';
+import { register } from '@/redux/features/authSlice';
 
 const RegisterPage: React.FC = () => {
-
+const dispatch = useAppDispatch();
+ const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [username, setUsername] = useState("");
+const router = useRouter();
  const [isChecked, setIsChecked] = useState(false);
 
   const handleCheckbox = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -17,10 +24,27 @@ const RegisterPage: React.FC = () => {
     setIsChecked(e.target.checked);
   };
 
-  const handleRegister = (e: React.FormEvent) => {
+  const handleRegister = async(e: React.FormEvent) => {
     e.preventDefault();
-    // ⚠️ Replace this alert with your actual registration logic (API call, state update, routing)
-    alert('Registration attempt. (Replace with actual API call)');
+    try {
+         const resultAction = await dispatch(register({username, email, password }));
+   
+         console.log("Login action result:", resultAction);
+         // resultAction.payload এ login thunk এর return data থাকবে
+         if (register.fulfilled.match(resultAction)) {
+           const user = resultAction.payload.user;
+           console.log("✅ Register successful:", user);
+   
+           if (user.role === "admin") {router.push("/dashboard/admin");}
+           else if (user.role === "seller"){ router.push("/dashboard/seller");}
+           else if (user.role === "superAdmin"){router.push("/dashboard/superAdmin");}
+           else router.push("/dashboard/customer");
+         } else {
+           console.log("❌ Login failed:", resultAction.payload);
+         }
+       } catch (error) {
+         console.error("Login error:", error);
+       }
   };
 
   return (
@@ -51,6 +75,8 @@ const RegisterPage: React.FC = () => {
             <input
               type="text"
               id="username"
+              value={username}
+               onChange={(e) => setUsername(e.target.value)}
               required
               className="w-full border border-gray-300 rounded-md p-2.5 focus:ring-orange-400 focus:border-orange-400 transition duration-150"
             />
@@ -65,7 +91,9 @@ const RegisterPage: React.FC = () => {
             <input
               type="email"
               id="email"
+              value={email}
               required
+              onChange={(e) => setEmail(e.target.value)}
               className="w-full border border-gray-300 rounded-md p-2.5 focus:ring-orange-400 focus:border-orange-400 transition duration-150"
             />
           </div>
@@ -79,6 +107,8 @@ const RegisterPage: React.FC = () => {
             <input
               type="password"
               id="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
               required
               className="w-full border border-gray-300 rounded-md p-2.5 focus:ring-orange-400 focus:border-orange-400 transition duration-150"
             />
