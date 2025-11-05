@@ -5,8 +5,17 @@ import React, { useState } from "react";
 
 // Lucide Icons are used as a standard React Icon library
 import { ArrowRight } from "lucide-react";
+import { useAppDispatch } from "@/redux/hooks";
+import { createAUser } from "@/redux/features/authSlice";
+import { useRouter } from "next/navigation";
 
 const CreateAUserPage: React.FC = () => {
+  const dispatch = useAppDispatch();
+  const router = useRouter();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [username, setUsername] = useState("");
+  const [role, setRole] = useState("");
   const [isChecked, setIsChecked] = useState(false);
 
   const handleCheckbox = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -14,10 +23,34 @@ const CreateAUserPage: React.FC = () => {
     setIsChecked(e.target.checked);
   };
 
-  const handleRegister = (e: React.FormEvent) => {
+  const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
-    // ⚠️ Replace this alert with your actual registration logic (API call, state update, routing)
-    alert("Registration attempt. (Replace with actual API call)");
+    try {
+      const resultAction = await dispatch(
+        createAUser({ username, email, role, password })
+      );
+
+      console.log("create A User action result:", resultAction);
+      // resultAction.payload এ login thunk এর return data থাকবে
+      if (createAUser.fulfilled.match(resultAction)) {
+        const user= resultAction.payload.user;
+        if (user.role === "admin") {
+          alert(`✅ Create Admin successful: ${JSON.stringify(user)}`);
+          console.log("✅ Create Admin successful: ", user);
+          // router.push("/dashboard/admin");
+        }
+        if (user.role === "seller") {
+          console.log("✅ Create Seller successful:", user);
+          router.push("/dashboard")
+        }
+
+        // else router.push("/");
+      } else {
+        console.log("❌ Create A User failed:", resultAction.payload);
+      }
+    } catch (error) {
+      console.error("User failed:", error);
+    }
   };
 
   return (
@@ -50,6 +83,8 @@ const CreateAUserPage: React.FC = () => {
             <input
               type="text"
               id="username"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
               required
               className="w-full border border-gray-300 rounded-md p-2.5 focus:ring-orange-400 focus:border-orange-400 transition duration-150"
             />
@@ -66,6 +101,8 @@ const CreateAUserPage: React.FC = () => {
             <input
               type="email"
               id="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               required
               className="w-full border border-gray-300 rounded-md p-2.5 focus:ring-orange-400 focus:border-orange-400 transition duration-150"
             />
@@ -73,20 +110,19 @@ const CreateAUserPage: React.FC = () => {
           {/* Define a Role */}
           <div>
             <label
-              htmlFor="email"
+              htmlFor="role"
               className="block text-sm font-medium text-gray-700 mb-1"
             >
               Select a role *
             </label>
-            {/* ⭐️ Input Padding p-3 -> p-2.5 */}
-            {/* <input
-              type="text"
-              id="role"
-              required
-              className="w-full border border-gray-300 rounded-md p-2.5 focus:ring-orange-400 focus:border-orange-400 transition duration-150"
-            /> */}
-            <select  defaultValue="" className="w-full border border-gray-300 rounded-md py-3.5 px-1 focus:ring-orange-400 focus:border-orange-400 transition duration-150">
-              <option className="rounded-md" value=""  disabled>
+
+            <select
+              value={role}
+              onChange={(e) => setRole(e.target.value)}
+              // defaultValue=""
+              className="w-full border border-gray-300 rounded-md py-3.5 px-1 focus:ring-orange-400 focus:border-orange-400 transition duration-150"
+            >
+              <option className="rounded-md" value="" disabled>
                 Selected Role
               </option>
               <option className="rounded-md" value="admin">
@@ -101,6 +137,7 @@ const CreateAUserPage: React.FC = () => {
           <div>
             <label
               htmlFor="password"
+              id="password"
               className="block text-sm font-medium text-gray-700 mb-1"
             >
               Password *
@@ -109,6 +146,8 @@ const CreateAUserPage: React.FC = () => {
             <input
               type="password"
               id="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
               required
               className="w-full border border-gray-300 rounded-md p-2.5 focus:ring-orange-400 focus:border-orange-400 transition duration-150"
             />

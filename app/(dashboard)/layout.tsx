@@ -32,12 +32,15 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       { name: "Overview", path: "/dashboard" },
       { name: "Manage Admins", path: "/dashboard/admin" },
       { name: "All Users", path: "/dashboard/users" },
+      { name: "Create A User", path: "/createAUser" },
+
       { name: "System Settings", path: "/dashboard/settings" },
     ],
     admin: [
       { name: "Overview", path: "/dashboard" },
       { name: "Products", path: "/dashboard/products" },
       { name: "Orders", path: "/dashboard/orders" },
+      { name: "Create A User", path: "/createAUser" },
       { name: "Reports", path: "/dashboard/reports" },
     ],
     seller: [

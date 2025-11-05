@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { logout } from "@/redux/features/authSlice";
 import { useRouter } from "next/navigation";
+import NavbarSkeleton from "./NavbarSkeleton";
 
 const Navbar = () => {
   const router = useRouter();
@@ -16,7 +17,7 @@ const Navbar = () => {
   const toggleMenu = () => setIsOpen(!isOpen);
   const dispatch = useAppDispatch();
   const auth = useAppSelector((s) => s.auth);
-  const { user, loading } = auth;
+  const { user, loading, initialized } = auth;
 
   // ⭐️ useEffect to handle scroll event
   useEffect(() => {
@@ -37,7 +38,9 @@ const Navbar = () => {
     };
   }, [isScrolled]); // Re-run effect only if isScrolled changes
 
-
+if (!initialized) {
+  return <NavbarSkeleton/>
+}
 
 
   if (loading && !user) {
@@ -109,7 +112,7 @@ const Navbar = () => {
         <div className="flex items-center gap-5">
           {/* Login / Signup */}
           <div className="hidden md:flex items-center gap-3">
-            {user ? (
+            {!initialized ? null : user ?(
               <span
                 onClick={handleLogout}
                 className="text-gray-700 border cursor-pointer border-gray-300 px-3 py-1.5 rounded-md text-sm hover:bg-gray-100 transition"
