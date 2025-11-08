@@ -37,11 +37,11 @@ const CreateAUserPage: React.FC = () => {
         if (user.role === "admin") {
           alert(`✅ Create Admin successful: ${JSON.stringify(user)}`);
           console.log("✅ Create Admin successful: ", user);
-          // router.push("/dashboard/admin");
+          // router.push("/");
         }
         if (user.role === "seller") {
           console.log("✅ Create Seller successful:", user);
-          router.push("/dashboard")
+          // router.push("/");
         }
 
         // else router.push("/");

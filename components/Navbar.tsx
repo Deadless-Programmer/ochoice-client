@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, } from "react";
 import { ShoppingCart, Menu, X, LayoutDashboard } from "lucide-react";
 import Link from "next/link";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
@@ -8,91 +8,68 @@ import { logout } from "@/redux/features/authSlice";
 import { useRouter } from "next/navigation";
 import NavbarSkeleton from "./NavbarSkeleton";
 
+
 const Navbar = () => {
   const router = useRouter();
-  const [isOpen, setIsOpen] = useState(false);
-  // ⭐️ New state to track scroll position for dynamic styling
-  const [isScrolled, setIsScrolled] = useState(false);
-
-  const toggleMenu = () => setIsOpen(!isOpen);
   const dispatch = useAppDispatch();
-  const auth = useAppSelector((s) => s.auth);
-  const { user, loading, initialized } = auth;
 
-  // ⭐️ useEffect to handle scroll event
+  const [isOpen, setIsOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
+  
+  
+  
+
+  const { user, loading, initialized} = useAppSelector((s) => s.auth);
+  console.log("navbar status", loading, initialized)
+
+  // ✅ Toggle menu (mobile)
+  const toggleMenu = () => setIsOpen((prev) => !prev);
+
+  // ✅ Scroll effect for sticky navbar
   useEffect(() => {
-    const handleScroll = () => {
-      // Check if the scroll position is past a certain threshold (e.g., 50px)
-      const scrolled = window.scrollY > 50;
-      if (scrolled !== isScrolled) {
-        setIsScrolled(scrolled);
-      }
-    };
-
-    // Add scroll event listener when the component mounts
+    const handleScroll = () => setIsScrolled(window.scrollY > 50);
     window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
-    // Clean up the event listener when the component unmounts
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-    };
-  }, [isScrolled]); // Re-run effect only if isScrolled changes
 
-if (!initialized) {
-  return <NavbarSkeleton/>
+  
+ 
+
+if (!initialized || loading) {
+  return <NavbarSkeleton />;
 }
 
-
-  if (loading && !user) {
-  return (
-    <div className="min-h-screen flex items-center justify-center text-gray-600">
-      Loading...
-    </div>
-  );
-}
-
-  const handleLogout = async (e: React.FormEvent) => {
-    e.preventDefault();
+  // ✅ Handle Logout
+  const handleLogout = async () => {
     try {
       const res = await dispatch(logout());
       if (logout.fulfilled.match(res)) {
+        localStorage.removeItem("accessToken");
         router.push("/");
-      } else {
-        console.log("❌ Login failed:", res.payload);
       }
-    } catch (err) {
-      console.error("Logout error:", err);
+    } catch (error) {
+      console.error("Logout failed:", error);
     }
-
-    console.log("logout");
   };
 
+  // ✅ Show Skeleton only when token exists but not initialized yet
+
   return (
-    // ⭐️ Fixed Positioning, Full Width, High Z-Index for "always on top"
-    // ⭐️ Dynamic background/shadow based on scroll for smooth effect
     <nav
-      className={`
-        sticky top-0 w-full z-50 transition-all duration-300 ease-in-out  max-w-7xl mx-auto
-        ${
-          isScrolled
-            ? "bg-white shadow-lg" // Scrolled: White background, subtle shadow
-            : "bg-white shadow-sm " // Top: Original shadow, constrained width
-        }
-      `}
+      className={`sticky max-w-7xl mx-auto  top-0  z-50 transition-all duration-300 ease-in-out ${
+        isScrolled ? "bg-white shadow-lg" : "bg-white shadow-sm"
+      }`}
     >
       <div
-        // ⭐️ Full width content container when fixed, centered when at top
-        className={
-          `mx-auto flex items-center justify-between px-6 py-4 
-            ${isScrolled ? "max-w-full" : "max-w-7xl"}` // Adjust max-width based on scroll
-        }
+        className={`mx-auto flex items-center justify-between px-6 py-4` }
       >
-        {/* Logo */}
+        {/* ✅ Logo */}
         <Link href="/" className="text-2xl font-bold text-gray-800">
           <span className="text-orange-400">o</span>Choice
         </Link>
 
-        {/* Desktop Menu */}
+        {/* ✅ Desktop Menu */}
         <ul className="hidden md:flex items-center gap-8 text-sm font-medium text-gray-700">
           <li>
             <Link href="/">HOME</Link>
@@ -108,34 +85,37 @@ if (!initialized) {
           </li>
         </ul>
 
-        {/* Right Section */}
+        {/* ✅ Right Section */}
         <div className="flex items-center gap-5">
-          {/* Login / Signup */}
           <div className="hidden md:flex items-center gap-3">
-            {!initialized ? null : user ?(
-              <span
-                onClick={handleLogout}
-                className="text-gray-700 border cursor-pointer border-gray-300 px-3 py-1.5 rounded-md text-sm hover:bg-gray-100 transition"
-              >
-                Logout
-              </span>
+            {user ? (
+              <>
+                <span
+                  onClick={handleLogout}
+                  className="text-gray-700 border cursor-pointer border-gray-300 px-3 py-1.5 rounded-md text-sm hover:bg-gray-100 transition"
+                >
+                  Logout
+                </span>
+              </>
             ) : (
-              <Link
-                href="/login"
-                className="text-gray-700 border border-gray-300 px-3 py-1.5 rounded-md text-sm hover:bg-gray-100 transition"
-              >
-                Login
-              </Link>
+              <>
+                <Link
+                  href="/login"
+                  className="text-gray-700 border border-gray-300 px-3 py-1.5 rounded-md text-sm hover:bg-gray-100 transition"
+                >
+                  Sign In
+                </Link>
+                <Link
+                  href="/register"
+                  className="bg-orange-400 text-white px-3 py-1.5 rounded-md text-sm hover:bg-orange-500 transition"
+                >
+                  Sign Up
+                </Link>
+              </>
             )}
-            <Link
-              href="/register"
-              className="bg-orange-400 text-white px-3 py-1.5 rounded-md text-sm hover:bg-orange-500 transition"
-            >
-              Sign Up
-            </Link>
           </div>
 
-          {/* Cart */}
+          {/* ✅ Cart */}
           <Link href="/cart">
             <div className="relative cursor-pointer text-gray-600">
               <ShoppingCart className="w-5 h-5" />
@@ -144,20 +124,22 @@ if (!initialized) {
               </span>
             </div>
           </Link>
+
+          {/* ✅ Dashboard */}
           <Link href="/dashboard">
             <div className="relative cursor-pointer text-gray-600">
               <LayoutDashboard className="w-5 h-5" />
             </div>
           </Link>
 
-          {/* Mobile Menu Button */}
+          {/* ✅ Mobile Menu Toggle */}
           <button onClick={toggleMenu} className="md:hidden text-gray-700">
             {isOpen ? <X /> : <Menu />}
           </button>
         </div>
       </div>
 
-      {/* Mobile Menu */}
+      {/* ✅ Mobile Menu */}
       {isOpen && (
         <ul className="md:hidden flex flex-col items-center gap-4 py-4 bg-white border-t text-gray-700">
           <li>
@@ -181,16 +163,32 @@ if (!initialized) {
             </Link>
           </li>
 
-          <li>
-            <Link href="/login" onClick={toggleMenu}>
-              Login
-            </Link>
-          </li>
-          <li>
-            <Link href="/register" onClick={toggleMenu}>
-              Sign Up
-            </Link>
-          </li>
+          {user ? (
+            <li>
+              <button
+                onClick={() => {
+                  handleLogout();
+                  toggleMenu();
+                }}
+                className="text-red-500"
+              >
+                Logout
+              </button>
+            </li>
+          ) : (
+            <>
+              <li>
+                <Link href="/login" onClick={toggleMenu}>
+                  Sign In
+                </Link>
+              </li>
+              <li>
+                <Link href="/register" onClick={toggleMenu}>
+                  Sign Up
+                </Link>
+              </li>
+            </>
+          )}
         </ul>
       )}
     </nav>

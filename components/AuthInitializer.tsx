@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 import { useAppDispatch } from "@/redux/hooks";
-import { getUserProfile } from "@/redux/features/authSlice";
+import { getUserProfile, markInitialized } from "@/redux/features/authSlice";
 
 const AuthInitializer = () => {
   const dispatch = useAppDispatch();
@@ -11,10 +11,13 @@ const AuthInitializer = () => {
     const token = localStorage.getItem("accessToken");
     if (token) {
       dispatch(getUserProfile());
+    } else {
+      // ✅ যদি কোনো token না থাকে, তবুও initialized করে দাও
+      dispatch(markInitialized());
     }
   }, [dispatch]);
 
-  return null; // কিছু UI দরকার নেই, শুধু কাজ করবে
+  return null;
 };
 
 export default AuthInitializer;

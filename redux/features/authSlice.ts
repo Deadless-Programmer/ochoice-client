@@ -106,7 +106,11 @@ export const logout = createAsyncThunk("auth/logout", async (_, thunkAPI) => {
 const authSlice = createSlice({
   name: "auth",
   initialState,
-  reducers: {},
+  reducers: {
+    markInitialized: (state) => {
+      state.initialized = true;
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(createAUser.fulfilled, (state, action) => {
@@ -151,4 +155,6 @@ const authSlice = createSlice({
   },
 });
 
+
+export const { markInitialized } = authSlice.actions;
 export default authSlice.reducer;
