@@ -13,11 +13,15 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const loading = auth.loading;
 
   // ✅ Redirect inside useEffect (NOT during render)
-  useEffect(() => {
+useEffect(() => {
+  const timer = setTimeout(() => {
     if (!loading && !user) {
       router.push("/login");
     }
-  }, [loading, user, router]);
+  }, 300); // 0.3s delay to allow state rehydration
+
+  return () => clearTimeout(timer);
+}, [loading, user, router]);
 
   if (loading || !user) {
     return (
@@ -34,7 +38,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       { name: "All Users", path: "/dashboard/users" },
       { name: "Create A User", path: "/createAUser" },
 
-      { name: "System Settings", path: "/dashboard/settings" },
+      // { name: "System Settings", path: "/dashboard/settings" },
     ],
     admin: [
       { name: "Overview", path: "/dashboard" },
@@ -91,7 +95,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
         <div className="mt-6 pt-6 border-t">
           <Link
-            href="/dashboard/settings"
+            href="/dashboard/settings/changePassword"
             className="block text-sm text-gray-600 hover:underline"
           >
             Settings

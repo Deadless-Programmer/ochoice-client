@@ -5,6 +5,7 @@ import "./globals.css";
 import ConditionalNavbar from "@/components/ConditionalNavbar";
 import Providers from "./providers";
 import AuthInitializer from "@/components/AuthInitializer";
+import { ToastContainer } from "react-toastify";
 
 
 
@@ -39,7 +40,18 @@ export default function RootLayout({
        <Providers>
         <ConditionalNavbar />
         <AuthInitializer/>
-        {children}</Providers>
+        {children}
+        <ToastContainer
+          position="top-right"
+          autoClose={3000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          pauseOnHover
+          draggable
+          theme="colored"
+        />
+        </Providers>
       </body>
     </html>
   );

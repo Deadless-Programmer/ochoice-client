@@ -65,6 +65,7 @@ export const login = createAsyncThunk(
   }
 );
 
+
 export const getUserProfile = createAsyncThunk(
   "auth/getUser",
   async (_, thunkAPI) => {
@@ -154,7 +155,6 @@ const authSlice = createSlice({
       });
   },
 });
-
 
 export const { markInitialized } = authSlice.actions;
 export default authSlice.reducer;

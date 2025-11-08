@@ -20,7 +20,7 @@ const Navbar = () => {
   
 
   const { user, loading, initialized} = useAppSelector((s) => s.auth);
-  console.log("navbar status", loading, initialized)
+  // console.log("navbar status", loading, initialized)
 
   // ✅ Toggle menu (mobile)
   const toggleMenu = () => setIsOpen((prev) => !prev);
