@@ -99,7 +99,7 @@ useEffect(() => {
             href="/dashboard/settings/changePassword"
             className="block text-sm text-gray-600 hover:underline"
           >
-            Settings
+            Change Password
           </Link>
           <Link
             href="/logout"

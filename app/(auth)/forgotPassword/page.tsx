@@ -1,18 +1,32 @@
 // app/login/page.tsx
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 
 // Lucide Icons are used as a standard React Icon library
 import { ArrowRight, } from 'lucide-react';
+import { publicAxios } from '@/lib/api/publicAxios';
+import { toast } from 'react-toastify';
 
 
-const forgotPasswordPage: React.FC = () => {
-  const handleSubmit = (e: React.FormEvent) => {
+const ForgotPasswordPage: React.FC = () => {
+   const [email, setEmail] = useState<string>("");
+
+  const handleSubmit = async(e: React.FormEvent) => {
     e.preventDefault();
-    // ⚠️ Replace this alert with your actual sign-in logic (API call, state update, routing)
-    alert('Sign In attempt. (Replace with actual API call)');
-  };
+      try {
+          const res = await publicAxios.post("/auth/forgot-password", {
+            email
+          });
+          toast.success(res.data.message || "Please check the Email to reset password and click the link ✅");
+        } catch (error) {
+      if (error instanceof Error) {
+        toast.error(error.message);
+      } else {
+        toast.error("Failed to send link to email ❌");
+      }
+    
+  }};
 
   return (
     // ⭐️ Height: min-h-screen/2 or min-h-full can be used if you have a wrapper layout
@@ -39,6 +53,8 @@ const forgotPasswordPage: React.FC = () => {
             <input
               type="email"
               id="emai"
+               value={email}
+              onChange={(e) => setEmail(e.target.value)}
               required
               className="w-full border border-gray-300 rounded-md p-2.5 focus:ring-orange-400 focus:border-orange-400 transition duration-150"
             />
@@ -58,4 +74,4 @@ const forgotPasswordPage: React.FC = () => {
   );
 };
 
-export default forgotPasswordPage;
+export default ForgotPasswordPage;

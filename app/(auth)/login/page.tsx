@@ -37,7 +37,19 @@ const LoginPage: React.FC = () => {
         else if (user.role === "superAdmin"){router.push("/dashboard/superAdmin");}
         else router.push("/dashboard/customer");
       } else {
-        console.log("❌ Login failed:", resultAction.payload);
+        // Safely derive a displayable error message from the unknown payload
+        let errorMessage = "❌ Login failed";
+        if (resultAction.payload) {
+          if (typeof resultAction.payload === "string") {
+            errorMessage = resultAction.payload;
+          } else if (typeof resultAction.payload === "object" && "message" in resultAction.payload) {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            errorMessage = (resultAction.payload as any).message ?? errorMessage;
+          } else {
+            errorMessage = String(resultAction.payload);
+          }
+        }
+        toast.error(errorMessage);
       }
     } catch (error) {
       console.error("Login error:", error);
@@ -114,12 +126,12 @@ const LoginPage: React.FC = () => {
                 Remember Me
               </label>
             </div>
-            <a
-              href="/forgot-password"
+            <Link
+              href="/forgotPassword"
               className="text-gray-500 hover:text-orange-400 transition duration-150"
             >
               Forgot Your Password?
-            </a>
+            </Link>
           </div>
           {/* Login Button - Reduced Vertical Padding */}
           <button

@@ -2,7 +2,9 @@
 
 import { useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import axios from "axios";
+
+import { toast } from "react-toastify";
+import { publicAxios } from "@/lib/api/publicAxios";
 
 export default function ResetPasswordPage() {
   const { token } = useParams(); // URL থেকে token পাবে
@@ -18,26 +20,22 @@ export default function ResetPasswordPage() {
 
     try {
       setLoading(true);
-      const res = await axios.post(
-        `${process.env.NEXT_PUBLIC_API_URL}/reset-password/${token}`,
+      const res = await publicAxios.post(
+        `${process.env.NEXT_PUBLIC_API_URL}/auth/reset-password/${token}`,
         { newPassword }
       );
       setMessage(res.data.message);
+      toast.success(res.data.message ||  `${message} ✅`);
+      
       router.push("/login"); // সফল হলে login page এ redirect
-    } catch (err: unknown) {
-      if (axios.isAxiosError(err)) {
-        // axios error: try to read the message from response data if present
-        setMessage(
-          (err.response?.data as { message?: string })?.message ||
-            "Something went wrong"
-        );
-      } else if (err instanceof Error) {
-        // generic Error object
-        setMessage(err.message);
-      } else {
-        setMessage("Something went wrong");
-      }
-    } finally {
+    } catch (error) {
+          if (error instanceof Error) {
+            toast.error(error.message);
+          } else {
+            toast.error("Failed reset email ❌");
+          }
+        
+      } finally {
       setLoading(false);
     }
   };
