@@ -11,6 +11,7 @@ import { useAppDispatch } from "@/redux/hooks";
 import { useRouter } from "next/navigation";
 
 import { login } from "@/redux/features/authSlice";
+import { toast } from "react-toastify";
 
 const LoginPage: React.FC = () => {
   const [email, setEmail] = useState("");
@@ -28,6 +29,8 @@ const LoginPage: React.FC = () => {
       if (login.fulfilled.match(resultAction)) {
         const user = resultAction.payload.user;
         console.log("✅ Login successful:", user);
+
+        toast.success(resultAction.payload.message || `${user.username} ${resultAction.payload.message} ✅`);
 
         if (user.role === "admin") {router.push("/dashboard/admin");}
         else if (user.role === "seller"){ router.push("/dashboard/seller");}

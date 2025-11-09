@@ -37,6 +37,7 @@ useEffect(() => {
       { name: "Manage Admins", path: "/dashboard/admin" },
       { name: "All Users", path: "/dashboard/users" },
       { name: "Create A User", path: "/createAUser" },
+      { name: "Reset Password", path: "/dashboard/superAdmin/resetPassword" },
 
       // { name: "System Settings", path: "/dashboard/settings" },
     ],
