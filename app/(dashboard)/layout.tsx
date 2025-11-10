@@ -96,14 +96,20 @@ useEffect(() => {
 
         <div className="mt-6 pt-6 border-t">
           <Link
+            href="/dashboard/settings/updateProfile"
+            className="block text-sm text-gray-600 hover:underline py-3"
+          >
+           Update Profile
+          </Link>
+          <Link
             href="/dashboard/settings/changePassword"
-            className="block text-sm text-gray-600 hover:underline"
+            className="block text-sm text-gray-600 hover:underline pb-3"
           >
             Change Password
           </Link>
           <Link
             href="/logout"
-            className="block text-sm text-red-500 mt-2"
+            className="block text-sm text-red-500 mt-2 "
           >
             Logout
           </Link>
