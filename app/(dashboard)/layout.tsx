@@ -35,7 +35,7 @@ useEffect(() => {
     superAdmin: [
       { name: "Overview", path: "/dashboard" },
       { name: "Manage Admins", path: "/dashboard/admin" },
-      { name: "All Users", path: "/dashboard/users" },
+      { name: "User Management", path: "/dashboard/userManagement" },
       { name: "Create A User", path: "/createAUser" },
       { name: "Reset Password", path: "/dashboard/superAdmin/resetPassword" },
 
@@ -44,6 +44,7 @@ useEffect(() => {
     admin: [
       { name: "Overview", path: "/dashboard" },
       { name: "Products", path: "/dashboard/products" },
+       { name: "User Management", path: "/dashboard/userManagement" },
       { name: "Orders", path: "/dashboard/orders" },
       { name: "Create A User", path: "/createAUser" },
       { name: "Reports", path: "/dashboard/reports" },
