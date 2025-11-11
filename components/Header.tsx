@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
 import { useState } from "react";
+import Link from "next/link";
 
 const slides = [
   {
@@ -64,9 +65,9 @@ export default function Header() {
                 <h2 className="text-3xl md:text-5xl font-bold mb-4 leading-tight">
                   {slide.title}
                 </h2>
-                <button className="border border-white px-5 py-2 text-sm flex items-center gap-2 hover:bg-white hover:text-black transition w-fit">
+                <Link href='/shop' className="border border-white px-5 py-2 text-sm flex items-center gap-2 hover:bg-white hover:text-black transition w-fit">
                   {slide.buttonText} <ArrowRight size={16} />
-                </button>
+                </Link>
               </div>
             </div>
           ))}
@@ -102,9 +103,9 @@ export default function Header() {
             <h3 className="text-lg font-bold leading-snug mb-3">
               Chairs & Chaises <br /> Up to 40% off
             </h3>
-            <button className="border border-white px-4 py-1 text-sm flex items-center gap-1 hover:bg-white hover:text-black transition w-fit">
+            <Link href="/shop" className="border border-white px-4 py-1 text-sm flex items-center gap-1 hover:bg-white hover:text-black transition w-fit">
               SHOP NOW <ArrowRight size={14} />
-            </button>
+            </Link>
           </div>
         </div>
 
@@ -121,9 +122,9 @@ export default function Header() {
             <h3 className="text-lg font-bold leading-snug mb-3">
               Best Lighting <br /> Collection
             </h3>
-            <button className="border border-white px-4 py-1 text-sm flex items-center gap-1 hover:bg-white hover:text-black transition w-fit">
+            <Link href="/shop" className="border border-white px-4 py-1 text-sm flex items-center gap-1 hover:bg-white hover:text-black transition w-fit">
               DISCOVER NOW <ArrowRight size={14} />
-            </button>
+            </Link>
           </div>
         </div>
       </div>
