@@ -96,7 +96,7 @@ export default function Header() {
             alt="Chairs & Chaises"
             width={400}
             height={240}
-            className="w-full h-[240px] object-cover"
+            className="w-full h-60 object-cover"
           />
           <div className="absolute inset-0 bg-black/40 text-white flex flex-col justify-center px-6">
             <p className="text-sm mb-1">Clearence</p>
@@ -115,7 +115,7 @@ export default function Header() {
             alt="Lighting Collection"
             width={400}
             height={240}
-            className="w-full h-[240px] object-cover"
+            className="w-full h-60 object-cover"
           />
           <div className="absolute inset-0 bg-black/40 text-white flex flex-col justify-center px-6">
             <p className="text-sm mb-1">New in</p>

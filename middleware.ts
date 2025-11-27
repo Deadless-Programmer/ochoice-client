@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-  // import jwt from "jsonwebtoken"; // 👈 middleware-edge এ এটা কাজ করবে না যদি তুমি serverless route এ চালাও, তাই নিচে decode manually করবো
-
+ 
 export async function middleware(request: NextRequest) {
   const refreshToken = request.cookies.get("refreshToken")?.value;
   const pathname = request.nextUrl.pathname;
@@ -24,7 +23,7 @@ export async function middleware(request: NextRequest) {
     const dashboardPath = pathname.split("/")[2]; // e.g. admin, customer
 
     try {
-      // Token থেকে role ডিকোড করার জন্য lightweight jwt parser (middleware-edge compatible)
+      
       const tokenPayload = JSON.parse(
         Buffer.from(refreshToken.split(".")[1], "base64").toString()
       );

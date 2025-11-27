@@ -1,143 +1,103 @@
+// Step 2: Update your Shop page component (Shop.tsx)
+// - Add states for multiple selections (arrays for categories, brands, sizes, colors).
+// - Use allProducts for unique values.
+// - Dispatch initial fetchProducts() if allProducts empty.
+// - On filter changes, dispatch fetchProducts with params.
+// - Update checkboxes/swatches to toggle in arrays.
+// - Update price slider to set maxPrice, label dynamically.
+// - Map sort dropdown to backend values.
+// - Add pagination controls below grid (simple prev/next buttons).
+// - Remove local filteredProducts; use products from Redux (filtered).
+// - Clean All resets states and dispatches with empty params.
+// - Add slight visual for selected colors (ring), but minimal change.
+// - No search input added (UI unchanged).
+
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import { Star } from "lucide-react";
 import Link from "next/link";
-
-// -------- Product Type --------
-interface Product {
-  id: number;
-  name: string;
-  category: string;
-  price: number;
-  oldPrice?: number | null;
-  image: string;
-  label?: string | null;
-  colors: string[];
-  rating: number;
-  reviews: number;
-  stock: boolean;
-  brand: string;
-  size: string[];
-  description: string;
-}
-
-// -------- Sample Data --------
-export const products: Product[] = [
-  {
-    id: 1,
-    name: "Brown paperbag waist pencil skirt",
-    category: "Women",
-    price: 60,
-    image:
-      "https://images.unsplash.com/photo-1512436991641-6745cdb1723f?auto=format&fit=crop&w=600&q=80",
-    label: "NEW",
-    colors: ["#c27b48", "#d2b48c"],
-    rating: 4,
-    reviews: 2,
-    stock: true,
-    brand: "Next",
-    size: ["S", "M", "L"],
-    description:
-      "A chic brown paperbag waist skirt designed with a flattering pencil cut. Perfect for both work and evening outings.",
-  },
-  {
-    id: 2,
-    name: "Dark yellow lace cut out swing dress",
-    category: "Dresses",
-    price: 84,
-    image:
-      "https://images.unsplash.com/photo-1602423763918-6ae68bca77c8?auto=format&fit=crop&w=687&q=80",
-    rating: 0,
-    reviews: 0,
-    stock: true,
-    brand: "River Island",
-    size: ["M", "L", "XL"],
-    colors: ["#e0aa3e", "#f7d560"],
-    description:
-      "Elegant lace swing dress in dark yellow with beautiful cut-out details for a timeless, feminine look.",
-  },
-  {
-    id: 3,
-    name: "Khaki utility boiler jumpsuit",
-    category: "Jackets",
-    price: 120,
-    image:
-      "https://images.unsplash.com/photo-1556905055-8f358a7a47b2?auto=format&fit=crop&w=600&q=80",
-    label: "Out of Stock",
-    rating: 5,
-    reviews: 6,
-    stock: false,
-    brand: "Geox",
-    size: ["M", "L"],
-    colors: ["#8a9a5b", "#6b705c"],
-    description:
-      "Utility-style khaki jumpsuit made from durable fabric with a modern fit and multiple pockets.",
-  },
-  {
-    id: 4,
-    name: "Blue utility pinafore denim dress",
-    category: "Jeans",
-    price: 76,
-    image:
-      "https://images.unsplash.com/photo-1730385781420-77c5ef5f0539?auto=format&fit=crop&w=687&q=80",
-    rating: 4,
-    reviews: 2,
-    stock: true,
-    brand: "New Balance",
-    size: ["S", "M", "L"],
-    colors: ["#0000ff", "#1e3a8a"],
-    description:
-      "Trendy denim pinafore dress designed for everyday comfort and effortless layering.",
-  },
-  {
-    id: 5,
-    name: "Beige knitted elastic runner shoes",
-    category: "Shoes",
-    price: 84,
-    image:
-      "https://images.unsplash.com/photo-1726133812290-1fcc8a0658a4?auto=format&fit=crop&w=765&q=80",
-    label: "NEW",
-    rating: 0,
-    reviews: 0,
-    stock: true,
-    brand: "UGG",
-    size: ["M", "L", "XL"],
-    colors: ["#f5deb3", "#d2b48c"],
-    description:
-      "Soft and breathable elastic runner shoes with premium knit finish and cushioned sole.",
-  },
-  {
-    id: 6,
-    name: "Orange saddle lock front chain cross body bag",
-    category: "Bags",
-    price: 84,
-    image:
-      "https://images.unsplash.com/photo-1584917865442-de89df76afd3?auto=format&fit=crop&w=600&q=80",
-    rating: 4,
-    reviews: 1,
-    stock: true,
-    brand: "Nike",
-    size: ["S"],
-    colors: ["#ff8c00", "#f4a261"],
-    description:
-      "Compact orange crossbody bag with gold chain detailing, perfect for travel or casual styling.",
-  },
-];
+import { useAppDispatch, useAppSelector } from "@/redux/hooks";
+import { fetchProducts } from "@/redux/features/productSlice";
+import SkeletonCard from "@/components/SkeletonCard";
 
 // -------- Component --------
 export default function Shop() {
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const dispatch = useAppDispatch();
+  const { products, allProducts, pagination, loading, error } = useAppSelector((state) => state.products);
 
-  const uniqueCategories = Array.from(new Set(products.map((p) => p.category)));
-  const uniqueSizes = Array.from(new Set(products.flatMap((p) => p.size)));
-  const uniqueColors = Array.from(new Set(products.flatMap((p) => p.colors)));
-  const uniqueBrands = Array.from(new Set(products.map((p) => p.brand)));
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+  const [selectedBrands, setSelectedBrands] = useState<string[]>([]);
+  const [selectedSizes, setSelectedSizes] = useState<string[]>([]);
+  const [selectedColors, setSelectedColors] = useState<string[]>([]);
+  const [maxPrice, setMaxPrice] = useState<number>(950);
+  const [sort, setSort] = useState<string>("newest");
+  const [page, setPage] = useState<number>(1);
 
-  const filteredProducts = selectedCategory
-    ? products.filter((p) => p.category === selectedCategory)
-    : products;
+  // Initial fetch for allProducts
+  useEffect(() => {
+    if (!allProducts.length) {
+      dispatch(fetchProducts());
+    }
+  }, [dispatch, allProducts.length]);
+
+  // Fetch filtered when filters change
+  useEffect(() => {
+    const params = {
+      category: selectedCategories,
+      brand: selectedBrands,
+      size: selectedSizes,
+      color: selectedColors, 
+      minPrice: 0,
+      maxPrice,
+      sort,
+      page,
+      limit: 20,
+    };
+    dispatch(fetchProducts(params));
+  }, [dispatch, selectedCategories, selectedBrands, selectedSizes, selectedColors, maxPrice, sort, page]);
+
+  if (loading)
+    return (
+      <div className="text-center py-10 text-yellow-500 font-semibold">
+        Loading products...
+      </div>
+    );
+
+  if (error)
+    return (
+      <div className="text-center py-10 text-red-500 font-semibold">
+        {error}
+      </div>
+    );
+
+  if (!products || products.length === 0)
+    return (
+     <SkeletonCard></SkeletonCard>
+    );
+
+  // Uniques from allProducts
+  const uniqueCategories = Array.from(new Set(allProducts.map((p) => p.category)));
+  const uniqueSizes = Array.from(new Set(allProducts.flatMap((p) => p.size)));
+  const uniqueColors = Array.from(new Set(allProducts.flatMap((p) => p.colors)));
+  const uniqueBrands = Array.from(new Set(allProducts.map((p) => p.brand)));
+
+  // Toggle helpers
+  const toggleSelection = (arr: string[], setArr: (v: string[]) => void, value: string) => {
+    setArr(arr.includes(value) ? arr.filter((v) => v !== value) : [...arr, value]);
+  };
+
+  // Clean All
+  const cleanAll = () => {
+    setSelectedCategories([]);
+    setSelectedBrands([]);
+    setSelectedSizes([]);
+    setSelectedColors([]);
+    setMaxPrice(8000000);
+    setSort("newest");
+    setPage(1);
+  };
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-10 grid grid-cols-1 md:grid-cols-[250px_1fr] gap-10">
@@ -148,7 +108,7 @@ export default function Shop() {
             Filters:
           </h3>
           <button
-            onClick={() => setSelectedCategory(null)}
+            onClick={cleanAll}
             className="text-xs text-yellow-600 hover:underline"
           >
             Clean All
@@ -163,10 +123,8 @@ export default function Shop() {
               <li key={cat} className="flex items-center gap-2">
                 <input
                   type="checkbox"
-                  checked={selectedCategory === cat}
-                  onChange={() =>
-                    setSelectedCategory(selectedCategory === cat ? null : cat)
-                  }
+                  checked={selectedCategories.includes(cat)}
+                  onChange={() => toggleSelection(selectedCategories, setSelectedCategories, cat)}
                   className="accent-yellow-500"
                 />
                 {cat}
@@ -181,7 +139,12 @@ export default function Shop() {
           <ul className="space-y-1 text-sm text-gray-600">
             {uniqueSizes.map((size) => (
               <li key={size} className="flex items-center gap-2">
-                <input type="checkbox" className="accent-yellow-500" />
+                <input
+                  type="checkbox"
+                  checked={selectedSizes.includes(size)}
+                  onChange={() => toggleSelection(selectedSizes, setSelectedSizes, size)}
+                  className="accent-yellow-500"
+                />
                 {size}
               </li>
             ))}
@@ -196,7 +159,10 @@ export default function Shop() {
               <span
                 key={color}
                 style={{ backgroundColor: color }}
-                className="w-5 h-5 rounded-full border border-gray-300 cursor-pointer"
+                className={`w-5 h-5 rounded-full border border-gray-300 cursor-pointer ${
+                  selectedColors.includes(color) ? "ring-2 ring-yellow-500" : ""
+                }`}
+                onClick={() => toggleSelection(selectedColors, setSelectedColors, color)}
               ></span>
             ))}
           </div>
@@ -208,7 +174,12 @@ export default function Shop() {
           <ul className="space-y-1 text-sm text-gray-600">
             {uniqueBrands.map((brand) => (
               <li key={brand} className="flex items-center gap-2">
-                <input type="checkbox" className="accent-yellow-500" />
+                <input
+                  type="checkbox"
+                  checked={selectedBrands.includes(brand)}
+                  onChange={() => toggleSelection(selectedBrands, setSelectedBrands, brand)}
+                  className="accent-yellow-500"
+                />
                 {brand}
               </li>
             ))}
@@ -219,12 +190,14 @@ export default function Shop() {
         <div>
           <h4 className="text-sm font-semibold mb-2">Price</h4>
           <p className="text-xs text-gray-500 mb-1">
-            Price Range: <span className="text-yellow-600">$0 – $950</span>
+            Price Range: <span className="text-yellow-600">$0 – ${maxPrice}</span>
           </p>
           <input
             type="range"
             min="0"
             max="950"
+            value={maxPrice}
+            onChange={(e) => setMaxPrice(parseInt(e.target.value))}
             className="w-full accent-yellow-500"
           />
         </div>
@@ -235,24 +208,38 @@ export default function Shop() {
         <div className="flex justify-between items-center text-sm text-gray-500 mb-6">
           <p>
             Showing{" "}
-            <span className="font-medium">{filteredProducts.length}</span> of{" "}
-            {products.length} Products
+            <span className="font-medium">{products.length}</span> of{" "}
+            {pagination?.total || allProducts.length} Products
           </p>
           <div className="flex items-center gap-2">
             <span>Sort by:</span>
-            <select className="border px-2 py-1 text-gray-600">
-              <option>Date</option>
-              <option>Most Popular</option>
+            <select 
+              className="border px-2 py-1 text-gray-600"
+              value={
+                sort === "newest" ? "Newest" :
+                sort === "price_asc" ? "Price: Low to High" :
+                "Price: High to Low"
+              }
+              onChange={(e) => {
+                const val = e.target.value;
+                setSort(
+                  val === "Newest" ? "newest" :
+                  val === "Price: Low to High" ? "price_asc" :
+                  "price_desc"
+                );
+              }}
+            >
+              <option>Newest</option>
               <option>Price: Low to High</option>
               <option>Price: High to Low</option>
             </select>
-          </div>
+          </div> 
         </div>
 
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
-          {filteredProducts.map((product) => (
+          {products.map((product) => (
             <div
-              key={product.id}
+              key={product._id}
               className="border border-amber-50 hover:border-amber-500 shadow-sm hover:shadow-lg transition p-4 relative"
             >
               {product.label && (
@@ -315,7 +302,7 @@ export default function Shop() {
                   ))}
                 </div>
 
-                <Link href={`/shop/${product.id}`}>
+                <Link href={`/shop/${product._id}`}>
                   <button
                     className={`mt-3 w-full flex items-center justify-center gap-2 py-2 text-sm font-medium transition 
       bg-yellow-500 text-white hover:bg-yellow-600
@@ -328,6 +315,29 @@ export default function Shop() {
             </div>
           ))}
         </div>
+
+        {/* Pagination */}
+        {pagination && (
+          <div className="flex justify-center items-center gap-4 mt-8 text-sm">
+            <button
+              disabled={!pagination.hasPrev}
+              onClick={() => setPage(page - 1)}
+              className="px-4 py-2 border bg-yellow-500 text-white disabled:opacity-50 hover:bg-yellow-600"
+            >
+              Prev
+            </button>
+            <span className="text-gray-600">
+              Page {pagination.page} of {pagination.pages}
+            </span>
+            <button
+              disabled={!pagination.hasNext}
+              onClick={() => setPage(page + 1)}
+              className="px-4 py-2 border bg-yellow-500 text-white disabled:opacity-50 hover:bg-yellow-600"
+            >
+              Next
+            </button>
+          </div>
+        )}
       </main>
     </div>
   );

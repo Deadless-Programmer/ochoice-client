@@ -4,14 +4,19 @@ import Image from "next/image";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { products } from "@/app/shop/page";
+import { useAppDispatch, useAppSelector } from "@/redux/hooks";
+import { fetchProducts } from "@/redux/features/productSlice";
+
 
 export default function ProductCard() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [cardsPerView, setCardsPerView] = useState(1);
 
-  // ✅ Responsive cards-per-view setup
-  useEffect(() => {
+  const dispatch = useAppDispatch();
+    const { products, loading, error } = useAppSelector((state) => state.products);
+  
+
+      useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth < 640) setCardsPerView(1); // mobile
       else if (window.innerWidth < 1024) setCardsPerView(2); // tablet
@@ -22,6 +27,35 @@ export default function ProductCard() {
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
+
+
+    useEffect(() => {
+      dispatch(fetchProducts());
+    }, [dispatch]);
+  
+    if (loading)
+      return (
+        <div className="text-center py-10 text-yellow-500 font-semibold">
+          Loading products...
+        </div>
+      );
+  
+       if (error)
+      return (
+        <div className="text-center py-10 text-red-500 font-semibold">
+          {error}
+        </div>
+      );
+  
+    if (!products || products.length === 0)
+      return (
+        <div className="text-center py-10 text-gray-500 font-medium">
+          No products found.
+        </div>
+      );
+
+  // ✅ Responsive cards-per-view setup
+
 
   const nextSlide = () => {
     setCurrentIndex((prev) =>
@@ -42,12 +76,12 @@ export default function ProductCard() {
       </h2>
 
       {/* Tabs */}
-      <div className="flex justify-center gap-6 mb-8 text-gray-600 uppercase text-sm font-medium">
+      {/* <div className="flex justify-center gap-6 mb-8 text-gray-600 uppercase text-sm font-medium">
         <span className="border-b-2 border-yellow-500 pb-1">All</span>
         <span>Furniture</span>
         <span>Decor</span>
         <span>Lighting</span>
-      </div>
+      </div> */}
 
       {/* Carousel */}
       <div className="relative flex items-center justify-center">
@@ -67,9 +101,9 @@ export default function ProductCard() {
               transform: `translateX(-${(currentIndex * 100) / cardsPerView}%)`,
             }}
           >
-            {products.map((product) => (
+            {products?.map((product) => (
               <div
-                key={product.id}
+                key={product._id}
                 className="shrink-0 w-full sm:w-1/2 lg:w-1/3 xl:w-1/4 flex flex-col items-center pb-4 shadow-xl overflow-hidden bg-white 
                 transform transition-all duration-300 hover:-translate-y-2 hover:scale-[1.03]"
               >
@@ -112,7 +146,7 @@ export default function ProductCard() {
                 </div>
 
                 {/* Button */}
-                <Link href={`/shop/${product.id}`} className="w-full mt-3 px-4">
+                <Link href={`/shop/${product._id}`} className="w-full mt-3 px-4">
                   <button
                     className="w-full flex items-center justify-center gap-2 py-2 text-sm font-medium 
                     bg-yellow-500 text-white rounded-md hover:bg-yellow-600 transition-all duration-300 shadow-sm"
