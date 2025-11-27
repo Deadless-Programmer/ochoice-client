@@ -12,6 +12,12 @@ const nextConfig = {
         hostname: 'upload.wikimedia.org',
         pathname: '/**',
       },
+
+      {
+        protocol: "https",
+        hostname: "via.placeholder.com",
+        pathname: '/**',
+      },
       {
         protocol: 'https',
         hostname: 'cdn-icons-png.flaticon.com',

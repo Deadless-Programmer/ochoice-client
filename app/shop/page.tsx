@@ -304,7 +304,7 @@ export default function Shop() {
 
                 <Link href={`/shop/${product._id}`}>
                   <button
-                    className={`mt-3 w-full flex items-center justify-center gap-2 py-2 text-sm font-medium transition 
+                    className={`mt-3 w-full flex items-center cursor-pointer justify-center gap-2 py-2 text-sm font-medium transition 
       bg-yellow-500 text-white hover:bg-yellow-600
     `}
                   >

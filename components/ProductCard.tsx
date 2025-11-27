@@ -54,6 +54,9 @@ export default function ProductCard() {
         </div>
       );
 
+
+      // console.log(products)
+
   // ✅ Responsive cards-per-view setup
 
 
