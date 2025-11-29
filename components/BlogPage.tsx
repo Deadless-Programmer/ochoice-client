@@ -3,6 +3,7 @@
 import React from 'react';
 import Image from 'next/image';
 import { ArrowRight } from 'lucide-react';
+import Link from 'next/link';
 
 // **********************************************
 // 1. TypeScript Interface: ব্লগ পোস্টের ডেটা টাইপ
@@ -23,7 +24,7 @@ const DUMMY_BLOG_POSTS: BlogPost[] = [
   {
     id: 1,
     title: 'Sed adipiscing ornare.',
-    date: 'Nov 22, 2018',
+    date: 'Nov 22, 2025',
     comments: 0,
     imageUrl: 'https://images.unsplash.com/photo-1543269664-76bc3997d9ea?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1170', // পাবলিক ফোল্ডারে এই ইমেজগুলো রাখুন
     altText: 'A book next to a plant.',
@@ -31,7 +32,7 @@ const DUMMY_BLOG_POSTS: BlogPost[] = [
   {
     id: 2,
     title: 'Fusce lacinia arcuet nulla.',
-    date: 'Dec 12, 2018',
+    date: 'Dec 12, 2025',
     comments: 0,
     imageUrl: 'https://images.unsplash.com/photo-1699205016830-02f55e7b44d8?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=687',
     altText: 'Man sitting on a chair.',
@@ -39,7 +40,7 @@ const DUMMY_BLOG_POSTS: BlogPost[] = [
   {
     id: 3,
     title: 'Quisque volutpat mattis eros.',
-    date: 'Dec 19, 2018',
+    date: 'Dec 19, 2025',
     comments: 2,
     imageUrl: 'https://images.unsplash.com/photo-1624267972402-ee8f154a3283?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=661',
     altText: 'Woman covering her face with hands.',
@@ -108,13 +109,16 @@ const BlogPage: React.FC = () => {
 
         {/* View More Articles বাটন */}
         <div className="flex justify-center mt-12">
+         <Link  href="/blog">
+         
+         
           <button
             onClick={() => console.log('Load more articles clicked')}
-            className="flex items-center px-6 py-3 border border-gray-400 text-gray-700 font-semibold text-sm uppercase tracking-wider rounded hover:bg-gray-50 transition duration-200"
+            className="flex items-center cursor-pointer px-6 py-3 border border-gray-400 text-gray-700 font-semibold text-sm uppercase tracking-wider rounded hover:bg-gray-50 transition duration-200"
           >
             View More Articles
             <ArrowRight className="w-4 h-4 ml-3" />
-          </button>
+          </button></Link>
         </div>
       </div>
     </div>

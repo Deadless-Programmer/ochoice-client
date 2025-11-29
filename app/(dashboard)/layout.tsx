@@ -51,7 +51,9 @@ useEffect(() => {
     ],
     seller: [
       { name: "Overview", path: "/dashboard" },
-      { name: "My Products", path: "/dashboard/products" },
+      { name: "My Products", path: "/dashboard/seller/myProducts" },
+      { name: "My Deleted Product", path: "/dashboard/seller/my-deleted-product" },
+      { name: "Create Product", path: "/dashboard/seller/create-product" },
       { name: "Sales", path: "/dashboard/sales" },
     ],
     customer: [

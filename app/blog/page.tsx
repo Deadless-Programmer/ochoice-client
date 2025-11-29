@@ -28,12 +28,12 @@ interface SidebarItem {
 const DUMMY_POST_DATA: BlogPostDetail = {
     title: 'Cras ornare tristique.',
     author: 'John Doe',
-    date: 'Nov 22, 2018',
+    date: 'Nov 22, 2025',
     category: 'Lifestyle, Shopping',
     comments: 2,
     mainImage: 'https://images.unsplash.com/photo-1530536476203-d77e573bc524?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1170', // Main blog image
     content: [
-        { type: 'paragraph', value: 'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Phasellus hendrerit. Pellentesque aliquet nibh nec urna. In nisi neque, aliquet vel, dapibus id, mattis vel, nisi. Sed pretium, ligula sollicitudin laoreet viverra, tortor libero sodales leo, eget blandit nunc tortor eu nibh. Nullam mollis. Ut justo. Suspendisse potenti. Sed egestas, ante et vulputate volutpat, eros pede semper est, vitae luctus metus libero eu augue.' },
+        { type: 'paragraph', value: 'Consectetuer adipiscing elit. Phasellus hendrerit. Pellentesque aliquet nibh nec urna. In nisi neque, aliquet vel, dapibus id, mattis vel, nisi. Sed pretium, ligula sollicitudin laoreet viverra, tortor libero sodales leo, eget blandit nunc tortor eu nibh. Nullam mollis. Ut justo. Suspendisse potenti. Sed egestas, ante et vulputate volutpat, eros pede semper est, vitae luctus metus libero eu augue.' },
         { type: 'paragraph', value: 'Sed egestas, ante et vulputate volutpat, eros pede semper est, vitae luctus metus libero eu augue. Morbi purus libero, faucibus adipiscing, commodo quis, gravida id, est. Sed lectus. Praesent elementum hendrerit tortor. Sed semper lorem at felis. Vestibulum volutpat, lacus a ultrices sagittis, mi neque euismod dui, eu pulvinar nunc sapien ornare nisl.' },
         { type: 'heading', value: 'Quisque volutpat mattis eros.' },
         { type: 'paragraph', value: 'Sed pretium, ligula sollicitudin laoreet viverra, tortor libero sodales leo, eget blandit nunc tortor eu nibh. Nullam mollis. Ut justo. Suspendisse potenti.' },
@@ -45,9 +45,9 @@ const DUMMY_POST_DATA: BlogPostDetail = {
 };
 
 const DUMMY_RECENT_POSTS: SidebarItem[] = [
-    { id: 1, title: 'Lorem ipsum dolor sit.', date: 'Dec 12, 2018' },
-    { id: 2, title: 'Vestibulum ante ipsum.', date: 'Nov 20, 2018' },
-    { id: 3, title: 'Aenean ac urna et leo.', date: 'Oct 15, 2018' },
+    { id: 1, title: 'Cheita dolor sit.', date: 'Dec 12, 2025' },
+    { id: 2, title: 'Vestibulum ante ipsum.', date: 'Nov 20, 2025' },
+    { id: 3, title: 'Aenean ac urna et leo.', date: 'Oct 15, 2025' },
 ];
 
 const DUMMY_CATEGORIES: string[] = [

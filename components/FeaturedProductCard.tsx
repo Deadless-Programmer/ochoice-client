@@ -148,7 +148,7 @@ export default function FeaturedProductCard({ featuredProduct }: { featuredProdu
             <button
               onClick={handleAddToCart}
               disabled={!featuredProduct?.stock}
-              className="flex-1 px-6 py-3 border border-orange-400 text-orange-400 font-semibold rounded-lg hover:bg-orange-50 transition duration-200 flex items-center justify-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex-1 px-6 py-3 border cursor-pointer border-orange-400 text-orange-400 font-semibold rounded-lg hover:bg-orange-50 transition duration-200 flex items-center justify-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <ShoppingCart className="w-5 h-5" />
               <span>ADD TO CART</span>

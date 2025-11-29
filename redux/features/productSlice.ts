@@ -33,7 +33,7 @@ export interface Product {
 // -------- State Interface --------
 interface ProductState {
   products: Product[];
-  allProducts: Product[];  // New: for unique categories, brands, etc. from all data
+  allProducts: Product[];  
   singleProduct: Product | null;
   pagination: {
     total: number;
@@ -44,6 +44,7 @@ interface ProductState {
     hasNext: boolean;
   } | null;
   loading: boolean;
+  singleProductLoading?:boolean;
   error: string | null;
 }
 
@@ -53,6 +54,7 @@ const initialState: ProductState = {
   allProducts: [],
   singleProduct: null,
   pagination: null,
+  singleProductLoading: true,
   loading: false,
   error: null,
 };
@@ -128,9 +130,9 @@ export const fetchSingleProduct = createAsyncThunk<Product, string>(
   async (id, { rejectWithValue }) => {
     try {
       const response = await publicAxios.get(`/products/${id}`);
-      return response.data;
+      return response.data.data;
     } catch (error: any) {
-      return rejectWithValue(error.response?.data?.message || "Failed to fetch product");
+      return rejectWithValue(error.response?.data?.data.message || "Failed to fetch product");
     }
   }
 );
@@ -162,16 +164,16 @@ const productSlice = createSlice({
       })
 
       // ---- Fetch Single ----
-      .addCase(fetchSingleProduct.pending, (state) => {
-        state.loading = true;
-        state.error = null;
-      })
-      .addCase(fetchSingleProduct.fulfilled, (state, action: PayloadAction<Product>) => {
-        state.loading = false;
-        state.singleProduct = action.payload;
-      })
+     .addCase(fetchSingleProduct.pending, (state) => {
+  state.singleProductLoading = true;
+  state.error = null;
+})
+     .addCase(fetchSingleProduct.fulfilled, (state, action) => {
+  state.singleProductLoading = false;
+  state.singleProduct = action.payload;
+})
       .addCase(fetchSingleProduct.rejected, (state, action: any) => {
-        state.loading = false;
+       state.singleProductLoading = false;
         state.error = action.payload;
       });
   },

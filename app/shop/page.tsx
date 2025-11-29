@@ -25,7 +25,9 @@ import SkeletonCard from "@/components/SkeletonCard";
 // -------- Component --------
 export default function Shop() {
   const dispatch = useAppDispatch();
-  const { products, allProducts, pagination, loading, error } = useAppSelector((state) => state.products);
+  const { products, allProducts, pagination, loading, error } = useAppSelector(
+    (state) => state.products
+  );
 
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [selectedBrands, setSelectedBrands] = useState<string[]>([]);
@@ -48,7 +50,7 @@ export default function Shop() {
       category: selectedCategories,
       brand: selectedBrands,
       size: selectedSizes,
-      color: selectedColors, 
+      color: selectedColors,
       minPrice: 0,
       maxPrice,
       sort,
@@ -56,7 +58,16 @@ export default function Shop() {
       limit: 20,
     };
     dispatch(fetchProducts(params));
-  }, [dispatch, selectedCategories, selectedBrands, selectedSizes, selectedColors, maxPrice, sort, page]);
+  }, [
+    dispatch,
+    selectedCategories,
+    selectedBrands,
+    selectedSizes,
+    selectedColors,
+    maxPrice,
+    sort,
+    page,
+  ]);
 
   if (loading)
     return (
@@ -72,20 +83,27 @@ export default function Shop() {
       </div>
     );
 
-  if (!products || products.length === 0)
-    return (
-     <SkeletonCard></SkeletonCard>
-    );
+  if (!products || products.length === 0) return <SkeletonCard></SkeletonCard>;
 
   // Uniques from allProducts
-  const uniqueCategories = Array.from(new Set(allProducts.map((p) => p.category)));
+  const uniqueCategories = Array.from(
+    new Set(allProducts.map((p) => p.category))
+  );
   const uniqueSizes = Array.from(new Set(allProducts.flatMap((p) => p.size)));
-  const uniqueColors = Array.from(new Set(allProducts.flatMap((p) => p.colors)));
+  const uniqueColors = Array.from(
+    new Set(allProducts.flatMap((p) => p.colors))
+  );
   const uniqueBrands = Array.from(new Set(allProducts.map((p) => p.brand)));
 
   // Toggle helpers
-  const toggleSelection = (arr: string[], setArr: (v: string[]) => void, value: string) => {
-    setArr(arr.includes(value) ? arr.filter((v) => v !== value) : [...arr, value]);
+  const toggleSelection = (
+    arr: string[],
+    setArr: (v: string[]) => void,
+    value: string
+  ) => {
+    setArr(
+      arr.includes(value) ? arr.filter((v) => v !== value) : [...arr, value]
+    );
   };
 
   // Clean All
@@ -124,7 +142,13 @@ export default function Shop() {
                 <input
                   type="checkbox"
                   checked={selectedCategories.includes(cat)}
-                  onChange={() => toggleSelection(selectedCategories, setSelectedCategories, cat)}
+                  onChange={() =>
+                    toggleSelection(
+                      selectedCategories,
+                      setSelectedCategories,
+                      cat
+                    )
+                  }
                   className="accent-yellow-500"
                 />
                 {cat}
@@ -142,7 +166,9 @@ export default function Shop() {
                 <input
                   type="checkbox"
                   checked={selectedSizes.includes(size)}
-                  onChange={() => toggleSelection(selectedSizes, setSelectedSizes, size)}
+                  onChange={() =>
+                    toggleSelection(selectedSizes, setSelectedSizes, size)
+                  }
                   className="accent-yellow-500"
                 />
                 {size}
@@ -162,7 +188,9 @@ export default function Shop() {
                 className={`w-5 h-5 rounded-full border border-gray-300 cursor-pointer ${
                   selectedColors.includes(color) ? "ring-2 ring-yellow-500" : ""
                 }`}
-                onClick={() => toggleSelection(selectedColors, setSelectedColors, color)}
+                onClick={() =>
+                  toggleSelection(selectedColors, setSelectedColors, color)
+                }
               ></span>
             ))}
           </div>
@@ -177,7 +205,9 @@ export default function Shop() {
                 <input
                   type="checkbox"
                   checked={selectedBrands.includes(brand)}
-                  onChange={() => toggleSelection(selectedBrands, setSelectedBrands, brand)}
+                  onChange={() =>
+                    toggleSelection(selectedBrands, setSelectedBrands, brand)
+                  }
                   className="accent-yellow-500"
                 />
                 {brand}
@@ -190,7 +220,8 @@ export default function Shop() {
         <div>
           <h4 className="text-sm font-semibold mb-2">Price</h4>
           <p className="text-xs text-gray-500 mb-1">
-            Price Range: <span className="text-yellow-600">$0 – ${maxPrice}</span>
+            Price Range:{" "}
+            <span className="text-yellow-600">$0 – ${maxPrice}</span>
           </p>
           <input
             type="range"
@@ -207,25 +238,28 @@ export default function Shop() {
       <main>
         <div className="flex justify-between items-center text-sm text-gray-500 mb-6">
           <p>
-            Showing{" "}
-            <span className="font-medium">{products.length}</span> of{" "}
+            Showing <span className="font-medium">{products.length}</span> of{" "}
             {pagination?.total || allProducts.length} Products
           </p>
           <div className="flex items-center gap-2">
             <span>Sort by:</span>
-            <select 
+            <select
               className="border px-2 py-1 text-gray-600"
               value={
-                sort === "newest" ? "Newest" :
-                sort === "price_asc" ? "Price: Low to High" :
-                "Price: High to Low"
+                sort === "newest"
+                  ? "Newest"
+                  : sort === "price_asc"
+                  ? "Price: Low to High"
+                  : "Price: High to Low"
               }
               onChange={(e) => {
                 const val = e.target.value;
                 setSort(
-                  val === "Newest" ? "newest" :
-                  val === "Price: Low to High" ? "price_asc" :
-                  "price_desc"
+                  val === "Newest"
+                    ? "newest"
+                    : val === "Price: Low to High"
+                    ? "price_asc"
+                    : "price_desc"
                 );
               }}
             >
@@ -233,7 +267,7 @@ export default function Shop() {
               <option>Price: Low to High</option>
               <option>Price: High to Low</option>
             </select>
-          </div> 
+          </div>
         </div>
 
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">

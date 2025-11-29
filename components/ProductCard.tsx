@@ -151,7 +151,7 @@ export default function ProductCard() {
                 {/* Button */}
                 <Link href={`/shop/${product._id}`} className="w-full mt-3 px-4">
                   <button
-                    className="w-full flex items-center justify-center gap-2 py-2 text-sm font-medium 
+                    className="w-full flex items-center cursor-pointer justify-center gap-2 py-2 text-sm font-medium 
                     bg-yellow-500 text-white rounded-md hover:bg-yellow-600 transition-all duration-300 shadow-sm"
                   >
                     View Details

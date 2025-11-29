@@ -1,20 +1,20 @@
 // app/shop/error.tsx
-'use client'; // ⚠️ Error Boundaries অবশ্যই Client Components হতে হবে
+'use client'; // 
 
 import { useEffect } from 'react';
  import Link from 'next/link';
  
 export default function ShopError({
-  error, // Next.js এই error object টি দেবে
-  reset, // এই ফাংশনটি দিয়ে আপনি রিকভারি করার চেষ্টা করতে পারেন
+  error, 
+  reset, 
 }: {
   error: Error & { digest?: string };
   reset: () => void;
 }) {
   
-  // 1. Error Logging (গুরুত্বপূর্ণ)
+
   useEffect(() => {
-    // এইখানে আপনি আপনার error reporting service-এ (Sentry, LogRocket, ইত্যাদি) error টি লগ করতে পারেন
+   
     console.error("Shop Segment Error:", error);
   }, [error]);
  
@@ -44,7 +44,7 @@ export default function ShopError({
       {/* Recovery Button */}
       <button
         onClick={
-          // reset() ফাংশনটিErrorBoundary-এর ভেতরের কম্পোনেন্টগুলোকে আবার রেন্ডার করার চেষ্টা করে।
+          
           () => reset()
         }
         className="px-6 py-3 bg-orange-400 text-white font-semibold rounded-full shadow-md hover:bg-orange-500 transition duration-300"

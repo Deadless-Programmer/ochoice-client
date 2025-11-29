@@ -11,7 +11,7 @@ export default function ShopLoading() {
       
       {/* Optional: Skeleton Grid for products */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 w-full max-w-6xl">
-        {[...Array(8)].map((_, index) => ( // 8টি স্কেলেটন কার্ড
+        {[...Array(8)].map((_, index) => ( 
           <div key={index} className="bg-white rounded-lg shadow-md overflow-hidden p-4">
             <div className="h-48 bg-gray-200 rounded-md mb-4"></div> {/* Image skeleton */}
             <div className="h-6 bg-gray-200 rounded-md w-3/4 mb-2"></div> {/* Title skeleton */}
