@@ -10,7 +10,7 @@ export default function ProtectedRoute({ children }: { children: React.ReactNode
 
   useEffect(() => {
     if (!user) {
-      // যদি redux এ user না থাকে, তাহলে login এ পাঠাও
+    
       router.push("/login");
     }
   }, [user, router]);
