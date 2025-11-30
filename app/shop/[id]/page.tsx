@@ -25,6 +25,9 @@ export default function ProductDetails() {
     (state) => state.products
   );
 
+  // console.log("user", user);
+
+  // console.log("singleProduct:", singleProduct);
   // Fetch Single Product
   useEffect(() => {
     if (id) {
@@ -36,7 +39,7 @@ export default function ProductDetails() {
   if (!initialized || loading) {
     return (
       <div className="flex justify-center items-center h-screen">
-        <div className="text-2xl text-gray-600">User Loading...</div>
+        <div className="text-2xl text-gray-600">Loading...</div>
       </div>
     );
   }

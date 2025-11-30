@@ -6,14 +6,23 @@ import { useAppSelector } from "@/redux/hooks";
 
 export default function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const router = useRouter();
-  const { user } = useAppSelector((state) => state.auth);
+  const { user, initialized, loading } = useAppSelector((state) => state.auth);
 
+  // Wait until auth check completes
   useEffect(() => {
-    if (!user) {
-    
+    if (initialized && !user) {
       router.push("/login");
     }
-  }, [user, router]);
+  }, [initialized, user, router]);
 
-  return <>{user ? children : null}</>;
+  // Loading stage → allow time for AuthInitializer
+  if (!initialized || loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center text-gray-600">
+        Loading...
+      </div>
+    );
+  }
+
+  return <>{children}</>;
 }

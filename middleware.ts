@@ -19,7 +19,6 @@ export async function middleware(request: NextRequest) {
       return NextResponse.redirect(new URL("/login", request.url));
     }
 
-    // Cookie থাকলে user role অনুযায়ী path check করা হবে
     const dashboardPath = pathname.split("/")[2]; // e.g. admin, customer
 
     try {

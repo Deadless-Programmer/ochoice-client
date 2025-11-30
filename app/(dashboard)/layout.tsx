@@ -6,24 +6,18 @@ import { usePathname, useRouter } from "next/navigation";
 import { useAppSelector } from "@/redux/hooks";
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
-  const pathname = usePathname();
   const router = useRouter();
-  const auth = useAppSelector((s) => s.auth);
-  const user = auth.user;
-  const loading = auth.loading;
+  const pathname = usePathname();
 
-  // ✅ Redirect inside useEffect (NOT during render)
-useEffect(() => {
-  const timer = setTimeout(() => {
-    if (!loading && !user) {
+  const { user, initialized, loading } = useAppSelector((s) => s.auth);
+
+  useEffect(() => {
+    if (initialized && !user) {
       router.push("/login");
     }
-  }, 300); // 0.3s delay to allow state rehydration
+  }, [initialized, user, router]);
 
-  return () => clearTimeout(timer);
-}, [loading, user, router]);
-
-  if (loading || !user) {
+  if (!initialized || loading || !user) {
     return (
       <div className="min-h-screen flex items-center justify-center text-gray-600">
         Loading...
@@ -38,13 +32,11 @@ useEffect(() => {
       { name: "User Management", path: "/dashboard/userManagement" },
       { name: "Create A User", path: "/createAUser" },
       { name: "Reset Password", path: "/dashboard/superAdmin/resetPassword" },
-
-      // { name: "System Settings", path: "/dashboard/settings" },
     ],
     admin: [
       { name: "Overview", path: "/dashboard" },
       { name: "Products", path: "/dashboard/products" },
-       { name: "User Management", path: "/dashboard/userManagement" },
+      { name: "User Management", path: "/dashboard/userManagement" },
       { name: "Orders", path: "/dashboard/orders" },
       { name: "Create A User", path: "/createAUser" },
       { name: "Reports", path: "/dashboard/reports" },
@@ -71,7 +63,9 @@ useEffect(() => {
       {/* Sidebar */}
       <aside className="w-64 bg-white border-r p-5">
         <div className="mb-6">
-          <Link href={'/'} className="text-lg font-bold"> <span  className="text-orange-400">o</span>Choice</Link>
+          <Link href={'/'} className="text-lg font-bold">
+            <span className="text-orange-400">o</span>Choice
+          </Link>
           <p className="text-sm text-gray-500">
             Role: <span className="font-medium">{roleKey}</span>
           </p>
@@ -102,7 +96,7 @@ useEffect(() => {
             href="/dashboard/settings/updateProfile"
             className="block text-sm text-gray-600 hover:underline py-3"
           >
-           Update Profile
+            Update Profile
           </Link>
           <Link
             href="/dashboard/settings/changePassword"
@@ -110,10 +104,7 @@ useEffect(() => {
           >
             Change Password
           </Link>
-          <Link
-            href="/logout"
-            className="block text-sm text-red-500 mt-2 "
-          >
+          <Link href="/logout" className="block text-sm text-red-500 mt-2">
             Logout
           </Link>
         </div>

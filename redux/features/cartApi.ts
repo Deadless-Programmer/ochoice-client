@@ -6,7 +6,7 @@ import { privateAxios } from "@/lib/api/privateAxios";
 const baseQuery = async (args: any) => {
   try {
     const result = await privateAxios(args);
-    return { data: result.data };
+    return { data: result.data.data };
   } catch (axiosError: any) {
     const err = axiosError;
     return {
@@ -53,6 +53,19 @@ export const cartApi = createApi({
       invalidatesTags: ["Cart"],
     }),
 
+    // 🔵 UPDATE Cart Item (quantity / size)
+    updateCartItem: builder.mutation<
+      any,
+      { id: string; userId: string; quantity?: number; size?: string[] }
+    >({
+      query: ({ id, ...body }) => ({
+        url: `/cart/update/${id}`,
+        method: "PUT",
+        data: body,
+      }),
+      invalidatesTags: ["Cart"],
+    }),
+
   }),
 });
 
@@ -60,4 +73,5 @@ export const {
   useAddToCartMutation,
   useGetUserCartQuery,
   useDeleteCartItemMutation,
+  useUpdateCartItemMutation,   
 } = cartApi;

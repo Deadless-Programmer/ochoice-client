@@ -12,7 +12,7 @@ const AuthInitializer = () => {
     if (token) {
       dispatch(getUserProfile());
     } else {
-      // ✅ যদি কোনো token না থাকে, তবুও initialized করে দাও
+     
       dispatch(markInitialized());
     }
   }, [dispatch]);
