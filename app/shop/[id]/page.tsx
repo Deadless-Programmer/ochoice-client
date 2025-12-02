@@ -69,6 +69,7 @@ export default function ProductDetails() {
       await addToCart({
         userId: user.id,
         productId: singleProduct?._id,
+        sellerId: singleProduct?.seller,
         name: singleProduct?.name,
         price: singleProduct?.price,
         quantity: qty,

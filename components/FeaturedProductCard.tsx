@@ -3,15 +3,16 @@
 
 import { Heart, ShoppingCart } from "lucide-react";
 import Image from "next/image";
-import { toast } from "react-toastify";
+import Link from "next/link";
+// import { toast } from "react-toastify";
 
 export default function FeaturedProductCard({ featuredProduct }: { featuredProduct: any }) {
 
-  const handleAddToCart = () => {
-    if (!featuredProduct.stock) return toast.error("This item is currently out of stock.");
-    toast.success("Product added to cart!");
-  };
-
+  // const handleAddToCart = () => {
+  //   if (!featuredProduct.stock) return toast.error("This item is currently out of stock.");
+  //   toast.success("Product added to cart!");
+  // };
+//  console.log(featuredProduct)
  
   const placeholder = "/placeholder.jpg"; 
   
@@ -145,14 +146,14 @@ export default function FeaturedProductCard({ featuredProduct }: { featuredProdu
           </div>
 
           <div className="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-4">
-            <button
-              onClick={handleAddToCart}
-              disabled={!featuredProduct?.stock}
+            <Link
+              
+              href={`/shop/${featuredProduct?._id}`}
               className="flex-1 px-6 py-3 border cursor-pointer border-orange-400 text-orange-400 font-semibold rounded-lg hover:bg-orange-50 transition duration-200 flex items-center justify-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <ShoppingCart className="w-5 h-5" />
-              <span>ADD TO CART</span>
-            </button>
+              <span>View Details</span>
+            </Link>
           </div>
         </div>
       </div>

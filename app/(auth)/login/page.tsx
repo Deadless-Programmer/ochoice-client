@@ -136,7 +136,7 @@ const LoginPage: React.FC = () => {
           {/* Login Button - Reduced Vertical Padding */}
           <button
             type="submit"
-            className="flex items-center justify-center w-full px-6 py-2.5 border border-orange-400 text-orange-400 font-semibold rounded-lg hover:bg-orange-50 transition duration-200 mt-4"
+            className="flex items-center justify-center cursor-pointer w-full px-6 py-2.5 border border-orange-400 text-orange-400 font-semibold rounded-lg hover:bg-orange-50 transition duration-200 mt-4"
           >
             LOG IN <ArrowRight className="w-4 h-4 ml-2" />
           </button>
@@ -148,11 +148,11 @@ const LoginPage: React.FC = () => {
           <div className="flex flex-col sm:flex-row gap-3">
             {" "}
             {/* ⭐️ gap-4 -> gap-3 */}
-            <button className="flex items-center justify-center flex-1 py-2 border border-gray-300 rounded-md hover:bg-gray-100 transition">
+            <button className="flex items-center cursor-pointer justify-center flex-1 py-2 border border-gray-300 rounded-md hover:bg-gray-100 transition">
               <FaGoogle className="w-5 h-5 mr-2 text-red-500" />
               Login With Google
             </button>
-            <button className="flex items-center justify-center flex-1 py-2 border border-gray-300 rounded-md hover:bg-gray-100 transition">
+            <button className="flex items-center justify-center flex-1 cursor-pointer py-2 border border-gray-300 rounded-md hover:bg-gray-100 transition">
               <IoLogoFacebook className="w-5 h-5 mr-2 text-blue-600" />
               Login With Facebook
             </button>

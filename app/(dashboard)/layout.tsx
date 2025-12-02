@@ -46,11 +46,11 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       { name: "My Products", path: "/dashboard/seller/myProducts" },
       { name: "My Deleted Product", path: "/dashboard/seller/my-deleted-product" },
       { name: "Create Product", path: "/dashboard/seller/create-product" },
-      { name: "Sales", path: "/dashboard/sales" },
+      { name: "Sales", path: "/dashboard/seller/sales" },
     ],
     customer: [
       { name: "My Dashboard", path: "/dashboard" },
-      { name: "My Orders", path: "/dashboard/orders" },
+      { name: "My Orders", path: "/dashboard/customer/orders" },
       { name: "My Reviews", path: "/dashboard/reviews" },
     ],
   };

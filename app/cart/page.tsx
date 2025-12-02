@@ -9,6 +9,8 @@ import {
   useUpdateCartItemMutation,
 } from "@/redux/features/cartApi";
 import { useAppSelector } from "@/redux/hooks";
+import { useCreateOrderMutation } from "@/redux/features/orderApi";
+
 
 interface CartItem {
   _id: string;
@@ -21,6 +23,8 @@ interface CartItem {
 }
 
 const CartPage: React.FC = () => {
+
+  
   // Use your auth state; assuming you have authLoading to indicate auth init
   const { user, loading: authLoading } = useAppSelector((state) => state.auth);
   const userId = user?.id;
@@ -35,6 +39,7 @@ const CartPage: React.FC = () => {
 
   const [deleteCartItem] = useDeleteCartItemMutation();
   const [updateCartItem] = useUpdateCartItemMutation();
+  const [createOrder] = useCreateOrderMutation();
 
   // Delete item
   const handleRemoveItem = async (id: string) => {
@@ -72,24 +77,9 @@ const CartPage: React.FC = () => {
   const tax = subtotal * 0.1;
   const shipping = subtotal > 0 ? 15 : 0;
   const total = subtotal + tax + shipping;
-
+  const totalCoast = total.toFixed(2)
   // Buy Now
-  const handleBuyNow = () => {
-    if (!cartData || cartData.length === 0) {
-      toast.error("Your cart is empty!");
-      return;
-    }
-    const payload = cartData.map((item) => ({
-      productId: item._id,
-      name: item.name,
-      size: item.size,
-      imageUrl: item.imageUrl,
-      quantity: item.quantity,
-      price: total.toFixed(2),
-    }));
-    console.log("Buy Now payload:", payload);
-    toast.success("Check console for Buy Now payload.");
-  };
+
 
   if (authLoading || cartLoading || !userId) {
     return (
@@ -116,6 +106,46 @@ const CartPage: React.FC = () => {
       </div>
     );
   }
+
+  const handleBuyNow = async () => {
+    if (!cartData || cartData.length === 0) {
+      toast.error("Your cart is empty!");
+      return;
+    }
+
+    if (!user?.id) {
+      toast.error("Please login to place an order.");
+      return;
+    }
+
+    const items = cartData.map((item) => ({
+      productId: item._id,
+      name: item.name,
+      size: item.size,
+      imageUrl: item.imageUrl,
+      quantity: item.quantity,
+      sellerId:item.sellerId,
+      price: totalCoast,
+    }));
+
+    const payload = {
+      userId: user.id,
+      items,
+    };
+
+    try {
+      const res: any = await createOrder(payload).unwrap();
+      toast.success("Order placed successfully!");
+       console.log("Order Response: ", res);
+      // if(res?.createdAt){
+      //   router.push('/dashboard/customer/orders')
+      // }
+    } catch (err: any) {
+      toast.error(err?.data?.message || "Failed to place order.");
+    }
+  };
+
+
 
   return (
     <div className="min-h-screen bg-gray-50 p-4 sm:p-8">
@@ -224,7 +254,7 @@ const CartPage: React.FC = () => {
 
               <div className="flex justify-between pt-3 text-xl font-extrabold text-gray-900">
                 <span>Order Total</span>
-                <span>${total.toFixed(2)}</span>
+                <span>${totalCoast}</span>
               </div>
             </div>
 
