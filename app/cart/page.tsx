@@ -145,7 +145,7 @@ const subtotal =
       return;
     }
 
-    const items = cartData.map((item) => ({
+    const items = cartData.map((item:any) => ({
       productId: item._id,
       name: item.name,
       size: item.size,
@@ -184,7 +184,7 @@ const subtotal =
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Cart Items */}
           <div className="lg:col-span-2 bg-white p-6 shadow-lg space-y-4 rounded-lg">
-            {cartData.map((item) => (
+            {cartData.map((item : any) => (
               <div
                 key={item._id}
                 className="flex items-center border-b last:border-b-0 py-4"
