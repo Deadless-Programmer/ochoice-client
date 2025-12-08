@@ -30,11 +30,10 @@ const CartPage: React.FC = () => {
   const { user, loading: authLoading } = useAppSelector((state) => state.auth);
   const userId = user?.id;
 
-  // ✅ Redirect logic: যদি লোডিং শেষ হয় কিন্তু ইউজার না থাকে, লগইনে পাঠাও
+ 
   useEffect(() => {
     if (!authLoading && !userId) {
-      // টোস্ট দেখাতে পারেন চাইলে
-      // toast.error("Please login to view cart");
+     
       router.push("/login");
     }
   }, [authLoading, userId, router]);
@@ -82,17 +81,15 @@ const CartPage: React.FC = () => {
   };
 
   // Totals
-  const subtotal =
-    cartData?.reduce((acc, item) => acc + item.price * item.quantity, 0) || 0;
+const subtotal =
+    cartData?.reduce((acc: number, item: any) => acc + item.price * item.quantity, 0) || 0;
   const tax = subtotal * 0.1;
   const shipping = subtotal > 0 ? 15 : 0;
   const total = subtotal + tax + shipping;
   const totalCoast = total.toFixed(2);
 
   // ✅ Loading Logic Update:
-  // ১. Auth চেক হচ্ছে? -> লোডিং দেখাও
-  // ২. ইউজার আছে কিন্তু কার্ট লোড হচ্ছে? -> লোডিং দেখাও
-  // ৩. ইউজার নেই? -> useEffect রিডাইরেক্ট করছে, তাই সাদা স্ক্রিন না দেখিয়ে "Redirecting..." বা লোডার দেখান
+
   if (authLoading || (userId && cartLoading)) {
     return (
       <div className="flex justify-center items-center h-[60vh]">
@@ -102,7 +99,7 @@ const CartPage: React.FC = () => {
     );
   }
 
-  // যদি ইউজার না থাকে (useEffect রিডাইরেক্ট করার ঠিক আগ মুহূর্ত)
+
   if (!userId) {
     return (
       <div className="flex justify-center items-center h-[60vh]">
@@ -169,8 +166,7 @@ const CartPage: React.FC = () => {
       toast.success("Order placed successfully!");
       console.log("Order Response: ", res);
       
-      // অর্ডার সফল হলে আপনি চাইলে অর্ডার পেজে পাঠাতে পারেন
-      // router.push('/dashboard/customer/orders');
+     
       
     } catch (err: any) {
       toast.error(err?.data?.message || "Failed to place order.");
@@ -210,7 +206,7 @@ const CartPage: React.FC = () => {
                   <p className="text-gray-600 text-sm">
                     Price: ${item.price.toFixed(2)}
                   </p>
-                  {/* Size দেখাতে চাইলে */}
+                 
                   {item.size && item.size.length > 0 && (
                      <p className="text-gray-500 text-xs">Size: {item.size.join(", ")}</p>
                   )}
