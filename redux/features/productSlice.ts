@@ -1,12 +1,5 @@
-// Step 1: Update your Redux slice (productSlice.ts)
-// We need to modify the state to include allProducts (for unique filters from all data) and pagination.
-// Update fetchProducts to accept optional params for filtering/sorting/pagination.
-// Change the thunk to return {products, pagination}.
-// Handle colors by stripping '#' when sending in params.
-// Add logic in fulfilled to set allProducts only on initial fetch (no params).
-
 import { publicAxios } from "@/lib/api/publicAxios";
-import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
 // -------- Product Interface --------
 export interface Product {
@@ -33,7 +26,7 @@ export interface Product {
 // -------- State Interface --------
 interface ProductState {
   products: Product[];
-  allProducts: Product[];  
+  allProducts: Product[];
   singleProduct: Product | null;
   pagination: {
     total: number;
@@ -44,7 +37,7 @@ interface ProductState {
     hasNext: boolean;
   } | null;
   loading: boolean;
-  singleProductLoading?:boolean;
+  singleProductLoading?: boolean;
   error: string | null;
 }
 
@@ -149,12 +142,15 @@ const productSlice = createSlice({
         state.loading = true;
         state.error = null;
       })
-      .addCase(fetchProducts.fulfilled, (state, action: PayloadAction<{ products: Product[]; pagination: any }>) => {
+     
+      .addCase(fetchProducts.fulfilled, (state, action: any) => {
         state.loading = false;
-        // If no params (initial fetch), set allProducts
-        if (!action?.meta?.arg) {
+        
+        // If no params (initial fetch i.e. arg is undefined), set allProducts
+        if (!action.meta.arg || Object.keys(action.meta.arg || {}).length === 0) {
           state.allProducts = action.payload.products;
         }
+        
         state.products = action.payload.products;
         state.pagination = action.payload.pagination;
       })
@@ -164,16 +160,16 @@ const productSlice = createSlice({
       })
 
       // ---- Fetch Single ----
-     .addCase(fetchSingleProduct.pending, (state) => {
-  state.singleProductLoading = true;
-  state.error = null;
-})
-     .addCase(fetchSingleProduct.fulfilled, (state, action) => {
-  state.singleProductLoading = false;
-  state.singleProduct = action.payload;
-})
+      .addCase(fetchSingleProduct.pending, (state) => {
+        state.singleProductLoading = true;
+        state.error = null;
+      })
+      .addCase(fetchSingleProduct.fulfilled, (state, action) => {
+        state.singleProductLoading = false;
+        state.singleProduct = action.payload;
+      })
       .addCase(fetchSingleProduct.rejected, (state, action: any) => {
-       state.singleProductLoading = false;
+        state.singleProductLoading = false;
         state.error = action.payload;
       });
   },
