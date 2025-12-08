@@ -71,9 +71,9 @@ export default function Shop() {
 
   if (loading)
     return (
-      <div className="text-center py-10 text-yellow-500 font-semibold">
-        Loading products...
-      </div>
+     <div className="w-full flex justify-center items-center py-10">
+      <div className="h-10 w-10 animate-spin rounded-full border-4 border-gray-300 border-t-transparent"></div>
+    </div>
     );
 
   if (error)
@@ -83,7 +83,12 @@ export default function Shop() {
       </div>
     );
 
-  if (!products || products.length === 0) return <SkeletonCard></SkeletonCard>;
+if (!products || products.length === 0)
+  return (
+    <div className="w-full flex justify-center items-center py-10">
+      <div className="h-10 w-10 animate-spin rounded-full border-4 border-gray-300 border-t-transparent"></div>
+    </div>
+  );
 
   // Uniques from allProducts
   const uniqueCategories = Array.from(

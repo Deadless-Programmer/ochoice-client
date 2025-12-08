@@ -24,28 +24,38 @@ const RegisterPage: React.FC = () => {
     setIsChecked(e.target.checked);
   };
 
-  const handleRegister = async (e: React.FormEvent) => {
+const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
       const resultAction = await dispatch(
         register({ username, email, password })
       );
 
-      console.log("Login action result:", resultAction);
-      // resultAction.payload এ login thunk এর return data থাকবে
+      console.log("Register action result:", resultAction);
+
       if (register.fulfilled.match(resultAction)) {
         const user = resultAction.payload.user;
         console.log("✅ Register successful:", user);
+        
+        // ১. টোস্ট মেসেজ দেখান (UX এর জন্য ভালো)
+        // toast.success("Registration successful! 🎉"); 
 
+        // ২. ⚠️ CRITICAL: Middleware যাতে টোকেন পায়, তাই রিফ্রেশ করুন
+        router.refresh();
+
+        // ৩. রিডাইরেক্ট লজিক
         if (user.role === "admin") {
           router.push("/dashboard/admin");
         } else if (user.role === "seller") {
           router.push("/dashboard/seller");
         } else if (user.role === "superAdmin") {
           router.push("/dashboard/superAdmin");
-        } else router.push("/dashboard/customer");
+        } else {
+          router.push("/dashboard/customer");
+        }
       } else {
         console.log("❌ Register failed:", resultAction.payload);
+        // toast.error("Registration failed");
       }
     } catch (error) {
       console.error("Register error:", error);

@@ -1,6 +1,6 @@
 const NavbarSkeleton = () => {
   return (
-    <div className="sticky top-0 w-full z-50 bg-white shadow-sm">
+    <div className="sticky top-0 max-w-7xl mx-auto z-50 bg-white shadow-sm">
       <div className="max-w-7xl mx-auto flex items-center justify-between px-6 py-4 animate-pulse">
         {/* Left: Logo */}
         <div className="h-6 w-24 bg-gray-200 rounded"></div>

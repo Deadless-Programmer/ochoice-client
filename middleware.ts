@@ -1,13 +1,15 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
- 
+
 export async function middleware(request: NextRequest) {
-  const refreshToken = request.cookies.get("refreshToken")?.value;
+  // ⚠️ CHANGE: এখন আমরা "accessToken" কুকি চেক করব
+  const token = request.cookies.get("accessToken")?.value; 
   const pathname = request.nextUrl.pathname;
 
-  // ✅ Public routes
+  // ✅ Public routes (Login/Register)
   if (pathname === "/login" || pathname === "/register") {
-    if (refreshToken) {
+    // যদি টোকেন থাকে, ড্যাশবোর্ডে পাঠাও
+    if (token) {
       return NextResponse.redirect(new URL("/dashboard", request.url));
     }
     return NextResponse.next();
@@ -15,16 +17,17 @@ export async function middleware(request: NextRequest) {
 
   // ✅ Protected routes check
   if (pathname.startsWith("/dashboard")) {
-    if (!refreshToken) {
+    // টোকেন না থাকলে লগইনে পাঠাও
+    if (!token) {
       return NextResponse.redirect(new URL("/login", request.url));
     }
 
     const dashboardPath = pathname.split("/")[2]; // e.g. admin, customer
 
     try {
-      
+      // টোকেন ডিকোড করা (JWT Structure: header.payload.signature)
       const tokenPayload = JSON.parse(
-        Buffer.from(refreshToken.split(".")[1], "base64").toString()
+        Buffer.from(token.split(".")[1], "base64").toString()
       );
 
       const userRole = tokenPayload.role;
@@ -40,6 +43,7 @@ export async function middleware(request: NextRequest) {
       }
     } catch (err) {
       console.error("Token parse failed:", err);
+      // টোকেন ভুল হলে লগইনে পাঠাও
       return NextResponse.redirect(new URL("/login", request.url));
     }
   }

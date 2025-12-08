@@ -19,35 +19,35 @@ const LoginPage: React.FC = () => {
   const dispatch = useAppDispatch();
   const router = useRouter();
 
-  const handleSignIn = async (e: React.FormEvent) => {
+ const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
       const resultAction = await dispatch(login({ email, password }));
 
-      console.log("Login action result:", resultAction);
-      // resultAction.payload এ login thunk এর return data থাকবে
       if (login.fulfilled.match(resultAction)) {
         const user = resultAction.payload.user;
-        console.log("✅ Login successful:", user);
+        
+        toast.success(resultAction.payload.message || "Login successful ✅");
 
-        toast.success(resultAction.payload.message || `${user.username} ${resultAction.payload.message} ✅`);
-
-        if (user.role === "admin") {router.push("/dashboard/admin");}
-        else if (user.role === "seller"){ router.push("/dashboard/seller");}
-        else if (user.role === "superAdmin"){router.push("/dashboard/superAdmin");}
-        else router.push("/dashboard/customer");
+       setTimeout(() => {
+        router.refresh(); 
+   
+       
+        if (user.role === "admin") {
+          router.push("/dashboard/admin");
+        } else if (user.role === "seller") {
+          router.push("/dashboard/seller");
+        } else if (user.role === "superAdmin") {
+          router.push("/dashboard/superAdmin");
+        } else {
+          router.push("/dashboard/customer");
+        }
+        }, 200);
       } else {
-        // Safely derive a displayable error message from the unknown payload
-        let errorMessage = "❌ Login failed";
+      
+        const errorMessage = "❌ Login failed";
         if (resultAction.payload) {
-          if (typeof resultAction.payload === "string") {
-            errorMessage = resultAction.payload;
-          } else if (typeof resultAction.payload === "object" && "message" in resultAction.payload) {
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            errorMessage = (resultAction.payload as any).message ?? errorMessage;
-          } else {
-            errorMessage = String(resultAction.payload);
-          }
+      
         }
         toast.error(errorMessage);
       }

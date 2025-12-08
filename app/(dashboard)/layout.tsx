@@ -4,6 +4,7 @@ import React, { useEffect } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useAppSelector } from "@/redux/hooks";
+import { Loader2 } from "lucide-react";
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
@@ -12,19 +13,25 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const { user, initialized, loading } = useAppSelector((s) => s.auth);
 
   useEffect(() => {
-    if (initialized && !user) {
+
+    if (initialized && !loading && !user) {
       router.push("/login");
     }
-  }, [initialized, user, router]);
+  }, [initialized, loading, user, router]);
 
-  if (!initialized || loading || !user) {
+
+  if (loading || !initialized) {
     return (
       <div className="min-h-screen flex items-center justify-center text-gray-600">
-        Loading...
+        <Loader2 className="animate-spin w-8 h-8 mr-2 text-orange-500" />
+        <span>Loading Dashboard...</span>
       </div>
     );
   }
 
+  
+
+ 
   const sidebarMenus: Record<string, { name: string; path: string }[]> = {
     superAdmin: [
       { name: "Overview", path: "/dashboard" },
@@ -55,21 +62,22 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     ],
   };
 
-  const roleKey = (user.role as string) ?? "customer";
+ 
+  const roleKey = (user?.role as string) ?? "customer";
   const menus = sidebarMenus[roleKey] ?? sidebarMenus["customer"];
 
   return (
     <div className="flex min-h-screen bg-gray-50">
-      {/* Sidebar */}
-      <aside className="w-64 bg-white border-r p-5">
+      {/* Sidebar - Fixed Position */}
+      <aside className="fixed left-0 top-0 h-full w-64 bg-white border-r p-5 overflow-y-auto hidden md:block z-40">
         <div className="mb-6">
           <Link href={'/'} className="text-lg font-bold">
             <span className="text-orange-400">o</span>Choice
           </Link>
-          <p className="text-sm text-gray-500">
-            Role: <span className="font-medium">{roleKey}</span>
+          <p className="text-sm text-gray-500 mt-2">
+            Role: <span className="font-medium capitalize">{roleKey}</span>
           </p>
-          <p className="text-sm text-gray-400 mt-1">Hi, {user.username}</p>
+          <p className="text-sm text-gray-400">Hi, {user?.username || "User"}</p>
         </div>
 
         <nav className="space-y-1">
@@ -79,7 +87,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               <Link
                 key={menu.path}
                 href={menu.path}
-                className={`block px-3 py-2 rounded-md text-sm ${
+                className={`block px-3 py-2 rounded-md text-sm transition-colors ${
                   active
                     ? "bg-orange-500 text-white"
                     : "text-gray-700 hover:bg-gray-100"
@@ -94,24 +102,26 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         <div className="mt-6 pt-6 border-t">
           <Link
             href="/dashboard/settings/updateProfile"
-            className="block text-sm text-gray-600 hover:underline py-3"
+            className="block text-sm text-gray-600 hover:underline py-2"
           >
             Update Profile
           </Link>
           <Link
             href="/dashboard/settings/changePassword"
-            className="block text-sm text-gray-600 hover:underline pb-3"
+            className="block text-sm text-gray-600 hover:underline pb-2"
           >
             Change Password
           </Link>
-          <Link href="/logout" className="block text-sm text-red-500 mt-2">
+          <Link href="/logout" className="block text-sm text-red-500 mt-2 hover:font-bold">
             Logout
           </Link>
         </div>
       </aside>
 
-      {/* Main content */}
-      <main className="flex-1 p-6">{children}</main>
+      {/* Main Content Area - Left Margin to avoid overlap with fixed sidebar */}
+      <div className="md:ml-64 w-full min-h-screen">
+         <main className="p-6">{children}</main>
+      </div>
     </div>
   );
 }

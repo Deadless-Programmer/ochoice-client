@@ -5,28 +5,25 @@ const nextConfig = {
       {
         protocol: 'https',
         hostname: 'images.unsplash.com',
-        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'plus.unsplash.com',  
       },
       {
         protocol: 'https',
         hostname: 'upload.wikimedia.org',
-        pathname: '/**',
       },
-
       {
         protocol: "https",
         hostname: "via.placeholder.com",
-        pathname: '/**',
       },
       {
         protocol: 'https',
         hostname: 'cdn-icons-png.flaticon.com',
-        pathname: '/**',
       },
     ],
   },
 };
 
 export default nextConfig;
-
-

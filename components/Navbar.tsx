@@ -1,13 +1,13 @@
 "use client";
 
-import { useState, useEffect, } from "react";
+import { useState, useEffect } from "react";
 import { ShoppingCart, Menu, X, LayoutDashboard } from "lucide-react";
 import Link from "next/link";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { logout } from "@/redux/features/authSlice";
 import { useRouter } from "next/navigation";
 import NavbarSkeleton from "./NavbarSkeleton";
-
+import { useGetUserCartQuery } from "@/redux/features/cartApi";
 
 const Navbar = () => {
   const router = useRouter();
@@ -15,12 +15,15 @@ const Navbar = () => {
 
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
-  
-  
-  
 
-  const { user, loading, initialized} = useAppSelector((s) => s.auth);
-  // console.log("navbar status", loading, initialized)
+  const { user, loading, initialized } = useAppSelector((s) => s.auth);
+  const userId = user?.id;
+
+  // RTK Query: get cart
+  const {
+    data: cartData,
+    isLoading: cartLoading,
+  } = useGetUserCartQuery(userId || "", { skip: !userId });
 
   // ✅ Toggle menu (mobile)
   const toggleMenu = () => setIsOpen((prev) => !prev);
@@ -32,38 +35,24 @@ const Navbar = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  if (!initialized || loading) {
+    return <NavbarSkeleton />;
+  }
 
-  
- 
-
-if (!initialized || loading) {
-  return <NavbarSkeleton />;
-}
-
-  // ✅ Handle Logout
+  // ✅ Handle Logout (Cleaned Version)
   const handleLogout = async () => {
-    try {
-      const res = await dispatch(logout());
-      if (logout.fulfilled.match(res)) {
-        localStorage.removeItem("accessToken");
-        router.push("/");
-      }
-    } catch (error) {
-      console.error("Logout failed:", error);
-    }
+    await dispatch(logout()); 
+    router.push("/login"); 
+    router.refresh(); 
   };
-
-  // ✅ Show Skeleton only when token exists but not initialized yet
 
   return (
     <nav
-      className={`sticky max-w-7xl mx-auto  top-0  z-50 transition-all duration-300 ease-in-out ${
+      className={`sticky max-w-7xl mx-auto top-0 z-50 transition-all duration-300 ease-in-out ${
         isScrolled ? "bg-white shadow-lg" : "bg-white shadow-sm"
       }`}
     >
-      <div
-        className={`mx-auto flex items-center justify-between px-6 py-4` }
-      >
+      <div className="mx-auto flex items-center justify-between px-6 py-4">
         {/* ✅ Logo */}
         <Link href="/" className="text-2xl font-bold text-gray-800">
           <span className="text-orange-400">o</span>Choice
@@ -71,32 +60,22 @@ if (!initialized || loading) {
 
         {/* ✅ Desktop Menu */}
         <ul className="hidden md:flex items-center gap-8 text-sm font-medium text-gray-700">
-          <li>
-            <Link href="/">HOME</Link>
-          </li>
-          <li>
-            <Link href="/shop">SHOP</Link>
-          </li>
-          <li>
-            <Link href="/about">ABOUT</Link>
-          </li>
-          <li>
-            <Link href="/blog">BLOG</Link>
-          </li>
+          <li><Link href="/">HOME</Link></li>
+          <li><Link href="/shop">SHOP</Link></li>
+          <li><Link href="/about">ABOUT</Link></li>
+          <li><Link href="/blog">BLOG</Link></li>
         </ul>
 
         {/* ✅ Right Section */}
         <div className="flex items-center gap-5">
           <div className="hidden md:flex items-center gap-3">
             {user ? (
-              <>
-                <span
-                  onClick={handleLogout}
-                  className="text-gray-700 border cursor-pointer border-gray-300 px-3 py-1.5 rounded-md text-sm hover:bg-gray-100 transition"
-                >
-                  Logout
-                </span>
-              </>
+              <span
+                onClick={handleLogout}
+                className="text-gray-700 border cursor-pointer border-gray-300 px-3 py-1.5 rounded-md text-sm hover:bg-gray-100 transition"
+              >
+                Logout
+              </span>
             ) : (
               <>
                 <Link
@@ -120,7 +99,7 @@ if (!initialized || loading) {
             <div className="relative cursor-pointer text-gray-600">
               <ShoppingCart className="w-5 h-5" />
               <span className="absolute -top-2 -right-2 bg-orange-400 text-white text-xs rounded-full px-1.5">
-                2
+                {cartLoading ? "..." : (cartData?.length || 0)}
               </span>
             </div>
           </Link>
@@ -142,26 +121,10 @@ if (!initialized || loading) {
       {/* ✅ Mobile Menu */}
       {isOpen && (
         <ul className="md:hidden flex flex-col items-center gap-4 py-4 bg-white border-t text-gray-700">
-          <li>
-            <Link href="/" onClick={toggleMenu}>
-              HOME
-            </Link>
-          </li>
-          <li>
-            <Link href="/shop" onClick={toggleMenu}>
-              SHOP
-            </Link>
-          </li>
-          <li>
-            <Link href="/about" onClick={toggleMenu}>
-              ABOUT
-            </Link>
-          </li>
-          <li>
-            <Link href="/blog" onClick={toggleMenu}>
-              BLOG
-            </Link>
-          </li>
+          <li><Link href="/" onClick={toggleMenu}>HOME</Link></li>
+          <li><Link href="/shop" onClick={toggleMenu}>SHOP</Link></li>
+          <li><Link href="/about" onClick={toggleMenu}>ABOUT</Link></li>
+          <li><Link href="/blog" onClick={toggleMenu}>BLOG</Link></li>
 
           {user ? (
             <li>
@@ -177,16 +140,8 @@ if (!initialized || loading) {
             </li>
           ) : (
             <>
-              <li>
-                <Link href="/login" onClick={toggleMenu}>
-                  Sign In
-                </Link>
-              </li>
-              <li>
-                <Link href="/register" onClick={toggleMenu}>
-                  Sign Up
-                </Link>
-              </li>
+              <li><Link href="/login" onClick={toggleMenu}>Sign In</Link></li>
+              <li><Link href="/register" onClick={toggleMenu}>Sign Up</Link></li>
             </>
           )}
         </ul>

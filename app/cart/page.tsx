@@ -1,8 +1,10 @@
 "use client";
 
+import { useEffect } from "react"; // ✅ Import useEffect
 import Image from "next/image";
 import { Trash2, Loader2, ShoppingCart } from "lucide-react";
 import toast, { Toaster } from "react-hot-toast";
+import { useRouter } from "next/navigation"; // ✅ Import useRouter
 import {
   useGetUserCartQuery,
   useDeleteCartItemMutation,
@@ -10,7 +12,6 @@ import {
 } from "@/redux/features/cartApi";
 import { useAppSelector } from "@/redux/hooks";
 import { useCreateOrderMutation } from "@/redux/features/orderApi";
-
 
 interface CartItem {
   _id: string;
@@ -23,11 +24,20 @@ interface CartItem {
 }
 
 const CartPage: React.FC = () => {
+  const router = useRouter(); // ✅ Router hook
 
-  
-  // Use your auth state; assuming you have authLoading to indicate auth init
+  // Use your auth state
   const { user, loading: authLoading } = useAppSelector((state) => state.auth);
   const userId = user?.id;
+
+  // ✅ Redirect logic: যদি লোডিং শেষ হয় কিন্তু ইউজার না থাকে, লগইনে পাঠাও
+  useEffect(() => {
+    if (!authLoading && !userId) {
+      // টোস্ট দেখাতে পারেন চাইলে
+      // toast.error("Please login to view cart");
+      router.push("/login");
+    }
+  }, [authLoading, userId, router]);
 
   // RTK Query: get cart
   const {
@@ -77,15 +87,27 @@ const CartPage: React.FC = () => {
   const tax = subtotal * 0.1;
   const shipping = subtotal > 0 ? 15 : 0;
   const total = subtotal + tax + shipping;
-  const totalCoast = total.toFixed(2)
-  // Buy Now
+  const totalCoast = total.toFixed(2);
 
-
-  if (authLoading || cartLoading || !userId) {
+  // ✅ Loading Logic Update:
+  // ১. Auth চেক হচ্ছে? -> লোডিং দেখাও
+  // ২. ইউজার আছে কিন্তু কার্ট লোড হচ্ছে? -> লোডিং দেখাও
+  // ৩. ইউজার নেই? -> useEffect রিডাইরেক্ট করছে, তাই সাদা স্ক্রিন না দেখিয়ে "Redirecting..." বা লোডার দেখান
+  if (authLoading || (userId && cartLoading)) {
     return (
       <div className="flex justify-center items-center h-[60vh]">
-        <Loader2 className="animate-spin w-8 h-8 mr-2" />
+        <Loader2 className="animate-spin w-8 h-8 mr-2 text-orange-500" />
         <span>Loading your cart...</span>
+      </div>
+    );
+  }
+
+  // যদি ইউজার না থাকে (useEffect রিডাইরেক্ট করার ঠিক আগ মুহূর্ত)
+  if (!userId) {
+    return (
+      <div className="flex justify-center items-center h-[60vh]">
+        <Loader2 className="animate-spin w-8 h-8 mr-2 text-orange-500" />
+        <span>Redirecting to login...</span>
       </div>
     );
   }
@@ -100,9 +122,16 @@ const CartPage: React.FC = () => {
 
   if (!cartData || cartData.length === 0) {
     return (
-      <div className="text-center mt-10">
-        <h2 className="text-2xl font-semibold">Your cart is empty 😔</h2>
-        <p>Add products to your cart!</p>
+      <div className="text-center mt-10 h-[50vh] flex flex-col items-center justify-center">
+        <ShoppingCart className="w-16 h-16 text-gray-300 mb-4" />
+        <h2 className="text-2xl font-semibold text-gray-700">Your cart is empty 😔</h2>
+        <p className="text-gray-500 mb-6">Add products to your cart!</p>
+        <button 
+          onClick={() => router.push('/shop')}
+          className="bg-orange-400 text-white px-6 py-2 rounded-md hover:bg-orange-500 transition"
+        >
+          Go to Shop
+        </button>
       </div>
     );
   }
@@ -115,6 +144,7 @@ const CartPage: React.FC = () => {
 
     if (!user?.id) {
       toast.error("Please login to place an order.");
+      router.push("/login");
       return;
     }
 
@@ -124,7 +154,7 @@ const CartPage: React.FC = () => {
       size: item.size,
       imageUrl: item.imageUrl,
       quantity: item.quantity,
-      sellerId:item.sellerId,
+      sellerId: item.sellerId,
       price: totalCoast,
     }));
 
@@ -134,37 +164,36 @@ const CartPage: React.FC = () => {
     };
 
     try {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const res: any = await createOrder(payload).unwrap();
       toast.success("Order placed successfully!");
-       console.log("Order Response: ", res);
-      // if(res?.createdAt){
-      //   router.push('/dashboard/customer/orders')
-      // }
+      console.log("Order Response: ", res);
+      
+      // অর্ডার সফল হলে আপনি চাইলে অর্ডার পেজে পাঠাতে পারেন
+      // router.push('/dashboard/customer/orders');
+      
     } catch (err: any) {
       toast.error(err?.data?.message || "Failed to place order.");
     }
   };
-
-
 
   return (
     <div className="min-h-screen bg-gray-50 p-4 sm:p-8">
       <Toaster position="top-right" reverseOrder={false} />
       <div className="max-w-7xl mx-auto">
         <h1 className="text-4xl font-extrabold text-gray-900 mb-8 flex items-center">
-          <ShoppingCart className="w-8 h-8 mr-3 text-orange-500" /> Shopping
-          Cart
+          <ShoppingCart className="w-8 h-8 mr-3 text-orange-500" /> Shopping Cart
         </h1>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Cart Items */}
-          <div className="lg:col-span-2 bg-white p-6 shadow-lg space-y-4">
+          <div className="lg:col-span-2 bg-white p-6 shadow-lg space-y-4 rounded-lg">
             {cartData.map((item) => (
               <div
                 key={item._id}
                 className="flex items-center border-b last:border-b-0 py-4"
               >
-                <div className="relative w-24 h-24 shrink-0 mr-4 overflow-hidden border border-gray-200">
+                <div className="relative w-24 h-24 shrink-0 mr-4 overflow-hidden border border-gray-200 rounded-md">
                   <Image
                     src={item.imageUrl}
                     alt={item.name}
@@ -181,6 +210,10 @@ const CartPage: React.FC = () => {
                   <p className="text-gray-600 text-sm">
                     Price: ${item.price.toFixed(2)}
                   </p>
+                  {/* Size দেখাতে চাইলে */}
+                  {item.size && item.size.length > 0 && (
+                     <p className="text-gray-500 text-xs">Size: {item.size.join(", ")}</p>
+                  )}
                 </div>
 
                 <div className="flex items-center space-x-4 ml-4">
@@ -231,7 +264,7 @@ const CartPage: React.FC = () => {
           </div>
 
           {/* Order Summary */}
-          <div className="lg:col-span-1 bg-white p-6 shadow-lg h-fit sticky top-8">
+          <div className="lg:col-span-1 bg-white p-6 shadow-lg h-fit sticky top-24 rounded-lg">
             <h2 className="text-2xl font-bold text-gray-900 mb-6 border-b pb-3">
               Order Summary
             </h2>
@@ -260,7 +293,7 @@ const CartPage: React.FC = () => {
 
             <button
               onClick={handleBuyNow}
-              className="mt-6 w-full py-3 cursor-pointer bg-orange-400 text-white text-lg font-semibold shadow-md hover:bg-orange-600 transition duration-300 flex items-center justify-center"
+              className="mt-6 w-full py-3 cursor-pointer bg-orange-400 text-white text-lg font-semibold shadow-md hover:bg-orange-600 transition duration-300 flex items-center justify-center rounded-md"
             >
               <ShoppingCart className="w-5 h-5 mr-2" />
               BUY NOW
