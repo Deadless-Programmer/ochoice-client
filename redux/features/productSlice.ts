@@ -88,7 +88,7 @@ export const fetchProducts = createAsyncThunk<
 
       // Price: minPrice fixed to 0, maxPrice if set
       appendIf("minPrice", params.minPrice || 0);
-      if (params.maxPrice !== undefined && params.maxPrice < 950) {  // Assuming 950 is max, only send if filtered
+      if (params.maxPrice !== undefined && params.maxPrice < 950) {
         appendIf("maxPrice", params.maxPrice);
       }
 
@@ -142,11 +142,10 @@ const productSlice = createSlice({
         state.loading = true;
         state.error = null;
       })
-     
       .addCase(fetchProducts.fulfilled, (state, action: any) => {
         state.loading = false;
         
-        // If no params (initial fetch i.e. arg is undefined), set allProducts
+       
         if (!action.meta.arg || Object.keys(action.meta.arg || {}).length === 0) {
           state.allProducts = action.payload.products;
         }
