@@ -3,7 +3,7 @@ import { privateAxios } from "@/lib/api/privateAxios";
 import { publicAxios } from "@/lib/api/publicAxios";
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
-// টাইপ ডেফিনিশন (আগের মতোই)
+
 interface User {
   id: string;
   username: string;
@@ -28,13 +28,13 @@ const initialState: AuthState = {
   initialized: false,
 };
 
-// --- Helper Function: Cookie Set করার জন্য ---
+
 const setAuthCookie = (token: string) => {
-  // টোকেনটি ১ দিনের জন্য কুকিতে সেট করছি (মিডলওয়্যারের জন্য)
+  
   document.cookie = `accessToken=${token}; path=/; max-age=86400; samesite=lax`;
 };
 
-// --- Helper Function: Cookie Remove করার জন্য ---
+
 const removeAuthCookie = () => {
   document.cookie = "accessToken=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT;";
 };
@@ -45,10 +45,10 @@ export const register = createAsyncThunk(
   async (credentials: { username: string; email: string; password: string }) => {
     const res = await publicAxios.post("/auth/register", credentials);
     
-    // ১. লোকাল স্টোরেজ (Axios এর জন্য)
+   
     localStorage.setItem("accessToken", res.data.accessToken);
 
-    // ২. কুকি সেট (Middleware এর জন্য) - আমরা accessToken কেই কুকিতে রাখছি
+   
     setAuthCookie(res.data.accessToken);
 
     return res.data;
@@ -61,17 +61,16 @@ export const login = createAsyncThunk(
   async (credentials: { email: string; password: string }) => {
     const res = await publicAxios.post("/auth/login", credentials);
 
-    // ১. লোকাল স্টোরেজ
+   
     localStorage.setItem("accessToken", res.data.accessToken);
 
-    // ২. কুকি সেট (Middleware এর জন্য)
+   
     setAuthCookie(res.data.accessToken);
 
     return res.data;
   }
 );
 
-// ✅ 3. Create User (Admin Only) - নো চেঞ্জ
 export const createAUser = createAsyncThunk(
   "auth/create-user",
   async (credentials: { username: string; email: string; role: string; password: string }) => {
@@ -101,13 +100,13 @@ export const logout = createAsyncThunk("auth/logout", async (_, thunkAPI) => {
   try {
     if (typeof window !== "undefined") {
       localStorage.removeItem("accessToken");
-      removeAuthCookie(); // কুকি ডিলিট
+      removeAuthCookie(); 
     }
     await publicAxios.post("/auth/logout");
     return { success: true };
   } catch (err: unknown) {
     if (axios.isAxiosError(err)) {
-       // এরর হলেও আমরা ক্লায়েন্ট সাইড ক্লিন করব
+    
        localStorage.removeItem("accessToken");
        removeAuthCookie();
        return thunkAPI.rejectWithValue(err.response?.data?.message);

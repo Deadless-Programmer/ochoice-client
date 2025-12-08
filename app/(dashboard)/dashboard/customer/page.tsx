@@ -3,8 +3,8 @@
 import React from "react";
 import { useAppSelector } from "@/redux/hooks";
 import { useGetUserOrdersQuery } from "@/redux/features/orderApi";
-import { Loader2, ShoppingBag, Package, Truck, CheckCircle, Clock, DollarSign } from "lucide-react";
-import { current } from "@reduxjs/toolkit";
+import { Loader2, ShoppingBag, Package, Truck, CheckCircle, Clock } from "lucide-react";
+
 
 interface Order {
   _id: string;
@@ -38,10 +38,10 @@ console.log(orders)
     shipped: orders.filter((o: Order) => o.status === "shipped").length,
     completed: orders.filter((o: Order) => o.status === "completed").length,
     canceled: orders.filter((o: Order) => o.status === "canceled").length,
-     totalSpent: orders.reduce((acc, order) => {
-  const orderTotal = order.items.reduce((sum, item) => sum + item.price, 0);
+     totalSpent: orders.reduce((acc: number, order: Order) => {
+  const orderTotal = order.items.reduce((sum: number, item: any) => sum + (item.price || 0), 0);
   return acc + orderTotal;
-}, 0)
+}, 0),
   };
 
   // Recent 5 orders

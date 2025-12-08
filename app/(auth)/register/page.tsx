@@ -36,14 +36,10 @@ const handleRegister = async (e: React.FormEvent) => {
       if (register.fulfilled.match(resultAction)) {
         const user = resultAction.payload.user;
         console.log("✅ Register successful:", user);
-        
-        // ১. টোস্ট মেসেজ দেখান (UX এর জন্য ভালো)
-        // toast.success("Registration successful! 🎉"); 
-
-        // ২. ⚠️ CRITICAL: Middleware যাতে টোকেন পায়, তাই রিফ্রেশ করুন
+     
         router.refresh();
 
-        // ৩. রিডাইরেক্ট লজিক
+      
         if (user.role === "admin") {
           router.push("/dashboard/admin");
         } else if (user.role === "seller") {
